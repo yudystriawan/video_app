@@ -38,21 +38,22 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     const playerMinHeight = kBottomNavigationBarHeight;
     final playerMaxHeight = MediaQuery.of(context).size.height -
-        AppBar().preferredSize.height -
         MediaQuery.of(context).padding.top -
         MediaQuery.of(context).padding.bottom;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
-      ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Container(
+      body: Stack(
+        children: [
+          Scaffold(
+            appBar: AppBar(
+              title: const Text('Home'),
+            ),
+            body: Container(
               color: Colors.amber,
               height: MediaQuery.of(context).size.height,
             ),
-            Miniplayer(
+          ),
+          SafeArea(
+            child: Miniplayer(
               valueNotifier: playerExpandProgress,
               controller: _miniplayerController,
               minHeight: playerMinHeight,
@@ -87,6 +88,22 @@ class _HomePageState extends State<HomePage> {
                   max: miniPlayerWidth,
                   percentage: percentageExpandedPlayer,
                 );
+
+                if (_chewieController != null) {
+                  if (isMiniPlayer || playerWidth < screenWidth) {
+                    _chewieController = ChewieController(
+                      videoPlayerController:
+                          _chewieController!.videoPlayerController,
+                      showControls: false,
+                    );
+                  } else {
+                    _chewieController = ChewieController(
+                      videoPlayerController:
+                          _chewieController!.videoPlayerController,
+                      showControls: true,
+                    );
+                  }
+                }
 
                 final playerWidget = Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,9 +227,9 @@ class _HomePageState extends State<HomePage> {
                   ],
                 );
               },
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -236,6 +253,5 @@ class _HomePageState extends State<HomePage> {
       showControls: false,
       autoPlay: true,
     );
-    _chewieController!.addListener(() {});
   }
 }
