@@ -1,6 +1,9 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:miniplayer/miniplayer.dart';
 import 'package:video_player/video_player.dart';
+
+import 'core/utils/util.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,6 +16,10 @@ class _HomePageState extends State<HomePage> {
   late VideoPlayerController _videoPlayerController;
   ChewieController? _chewieController;
   bool _initializing = false;
+  double miniplayerPercentageDeclaration = 0.2;
+  final ValueNotifier<double> playerExpandProgress =
+      ValueNotifier(kBottomNavigationBarHeight);
+  final MiniplayerController _miniplayerController = MiniplayerController();
 
   @override
   void initState() {
@@ -29,6 +36,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    const playerMinHeight = kBottomNavigationBarHeight;
+    final playerMaxHeight = MediaQuery.of(context).size.height -
+        AppBar().preferredSize.height -
+        MediaQuery.of(context).padding.top -
+        MediaQuery.of(context).padding.bottom;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
@@ -40,99 +52,165 @@ class _HomePageState extends State<HomePage> {
               color: Colors.amber,
               height: MediaQuery.of(context).size.height,
             ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              left: 0,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    color: Colors.grey,
-                    width: double.infinity,
-                    height: kBottomNavigationBarHeight,
-                    child: Row(
-                      children: [
-                        Container(
-                          color: Colors.black,
-                          width: 160,
-                          height: double.maxFinite,
-                          child: _initializing || _chewieController == null
-                              ? const Center(child: CircularProgressIndicator())
-                              : Chewie(controller: _chewieController!),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: const [
-                                Text('Title'),
-                                Text('Description')
-                              ],
-                            ),
+            Miniplayer(
+              valueNotifier: playerExpandProgress,
+              controller: _miniplayerController,
+              minHeight: playerMinHeight,
+              maxHeight: playerMaxHeight,
+              builder: (height, percentage) {
+                final isMiniPlayer =
+                    percentage < miniplayerPercentageDeclaration;
+                final screenWidth = MediaQuery.of(context).size.width;
+                final miniPlayerWidth = screenWidth * 0.4;
+
+                var percentageExpandedPlayer = percentageFromValueInRange(
+                    min: playerMinHeight, max: playerMaxHeight, value: height);
+                if (percentageExpandedPlayer < 0) percentageExpandedPlayer = 0;
+
+                final percentageMiniplayer = percentageFromValueInRange(
+                    min: playerMinHeight,
+                    max: playerMaxHeight * miniplayerPercentageDeclaration +
+                        playerMinHeight,
+                    value: height);
+
+                final elementOpacity = 1 - 1 * percentageMiniplayer;
+                final progressIndicatorHeight = 4 - 4 * percentageMiniplayer;
+
+                final playerWidth = valueFromPercentageInRange(
+                  min: miniPlayerWidth,
+                  max: screenWidth,
+                  percentage: percentageExpandedPlayer,
+                );
+
+                final playerHeight = valueFromPercentageInRange(
+                  min: kBottomNavigationBarHeight,
+                  max: miniPlayerWidth,
+                  percentage: percentageExpandedPlayer,
+                );
+
+                final playerWidget = Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: playerWidth,
+                      height: playerHeight,
+                      color: Colors.green,
+                      child: _initializing || _chewieController == null
+                          ? const Center(child: CircularProgressIndicator())
+                          : Chewie(controller: _chewieController!),
+                    ),
+                    if (isMiniPlayer) ...[
+                      const SizedBox(
+                        width: 12,
+                      ),
+                      Expanded(
+                        child: Opacity(
+                          opacity: elementOpacity,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Text('Title'),
+                              Text('Description'),
+                            ],
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        if (_chewieController != null)
-                          ValueListenableBuilder(
+                      ),
+                      if (_chewieController != null)
+                        ValueListenableBuilder(
+                          valueListenable:
+                              _chewieController!.videoPlayerController,
+                          builder: (context, value, child) {
+                            final maxDuration = value.duration.inSeconds;
+                            final currentDuration = value.position.inSeconds;
+
+                            final isPlaying = value.isPlaying;
+                            final isFinish = currentDuration == maxDuration;
+
+                            return Opacity(
+                              opacity: elementOpacity,
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: () async {
+                                      if (isFinish) {
+                                        videoPlayerInitialized();
+                                        return;
+                                      }
+
+                                      if (isPlaying) {
+                                        await _chewieController?.pause();
+                                      } else {
+                                        await _chewieController?.play();
+                                      }
+                                    },
+                                    icon: Icon(isFinish
+                                        ? Icons.loop
+                                        : isPlaying
+                                            ? Icons.pause
+                                            : Icons.play_arrow),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(Icons.close),
+                                  ),
+                                  const SizedBox(width: 8),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                    ]
+                  ],
+                );
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (isMiniPlayer) ...[
+                      Expanded(child: playerWidget),
+                      if (_chewieController != null)
+                        SizedBox(
+                          height: progressIndicatorHeight,
+                          child: ValueListenableBuilder(
                             valueListenable:
                                 _chewieController!.videoPlayerController,
                             builder: (context, value, child) {
                               final maxDuration = value.duration.inSeconds;
                               final currentDuration = value.position.inSeconds;
 
-                              final isPlaying = value.isPlaying;
-                              final isFinish = currentDuration == maxDuration;
+                              final currentPosition =
+                                  currentDuration / maxDuration;
 
-                              return IconButton(
-                                onPressed: () async {
-                                  if (isFinish) {
-                                    videoPlayerInitialized();
-                                    return;
-                                  }
-
-                                  if (isPlaying) {
-                                    await _chewieController?.pause();
-                                  } else {
-                                    await _chewieController?.play();
-                                  }
-                                },
-                                icon: Icon(isFinish
-                                    ? Icons.loop
-                                    : isPlaying
-                                        ? Icons.pause
-                                        : Icons.play_arrow),
+                              return SizedBox(
+                                height: progressIndicatorHeight,
+                                child: Opacity(
+                                  opacity: elementOpacity,
+                                  child: LinearProgressIndicator(
+                                    value: currentPosition,
+                                  ),
+                                ),
                               );
                             },
                           ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.close),
+                        )
+                    ] else ...[
+                      playerWidget,
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text('Title'),
+                            Text('Description'),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                      ],
-                    ),
-                  ),
-                  if (_chewieController != null)
-                    ValueListenableBuilder(
-                      valueListenable: _chewieController!.videoPlayerController,
-                      builder: (context, value, child) {
-                        final maxDuration = value.duration.inSeconds;
-                        final currentDuration = value.position.inSeconds;
-
-                        final currentPosition = currentDuration / maxDuration;
-
-                        return LinearProgressIndicator(
-                          value: currentPosition,
-                        );
-                      },
-                    ),
-                ],
-              ),
-            ),
+                      ),
+                    ]
+                  ],
+                );
+              },
+            )
           ],
         ),
       ),
