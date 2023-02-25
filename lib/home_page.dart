@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:video_app/features/video_player/presentation/widgets/video_list_widget.dart';
 import 'package:video_app/features/video_player/presentation/widgets/video_player.dart';
 
 import 'core/utils/util.dart';
@@ -80,10 +81,7 @@ class HomeScaffold extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Home'),
       ),
-      body: Container(
-        color: Colors.amber,
-        height: MediaQuery.of(context).size.height,
-      ),
+      body: const VideoListWidget(),
     );
   }
 }

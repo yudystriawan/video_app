@@ -1,6 +1,9 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:miniplayer/miniplayer.dart';
+import 'package:video_app/features/video_player/data/model/video.dart';
+import 'package:video_app/features/video_player/presentation/bloc/video_player/video_player_bloc.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../../core/utils/util.dart';
@@ -19,22 +22,14 @@ class VideoPlayer extends StatefulWidget {
 
 class _VideoPlayerState extends State<VideoPlayer> {
   bool _initializing = false;
-  bool _isDimissed = false;
+  bool _isDimissed = true;
   double miniplayerPercentageDeclaration = 0.2;
 
   final MiniplayerController _miniplayerController = MiniplayerController();
-  late VideoPlayerController _videoPlayerController;
   ChewieController? _chewieController;
 
   @override
-  void initState() {
-    super.initState();
-    videoPlayerInitialized();
-  }
-
-  @override
   void dispose() {
-    _videoPlayerController.dispose();
     _miniplayerController.dispose();
     _chewieController?.dispose();
     super.dispose();
@@ -46,212 +41,235 @@ class _VideoPlayerState extends State<VideoPlayer> {
     final playerMaxHeight =
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
 
-    if (_isDimissed) {
-      return const SizedBox();
-    }
+    return BlocConsumer<VideoPlayerBloc, VideoPlayerState>(
+      listenWhen: (p, c) => p.video != c.video,
+      listener: (context, state) async {
+        await videoPlayerInitialized(state.video);
+      },
+      builder: (context, state) {
+        if (_isDimissed) return const SizedBox();
 
-    return Miniplayer(
-      valueNotifier: playerExpandProgress,
-      controller: _miniplayerController,
-      minHeight: playerMinHeight,
-      maxHeight: playerMaxHeight,
-      elevation: 100,
-      backgroundColor: Colors.transparent,
-      builder: (height, percentage) {
-        final isMiniPlayer = percentage < miniplayerPercentageDeclaration;
-        final screenWidth = MediaQuery.of(context).size.width;
-        final miniPlayerWidth = screenWidth * 0.4;
+        return Miniplayer(
+          valueNotifier: playerExpandProgress,
+          controller: _miniplayerController,
+          minHeight: playerMinHeight,
+          maxHeight: playerMaxHeight,
+          elevation: 100,
+          backgroundColor: Colors.transparent,
+          builder: (height, percentage) {
+            final isMiniPlayer = percentage < miniplayerPercentageDeclaration;
+            final screenWidth = MediaQuery.of(context).size.width;
+            final miniPlayerWidth = screenWidth * 0.4;
 
-        var percentageExpandedPlayer = percentageFromValueInRange(
-            min: playerMinHeight, max: playerMaxHeight, value: height);
-        if (percentageExpandedPlayer < 0) percentageExpandedPlayer = 0;
+            var percentageExpandedPlayer = percentageFromValueInRange(
+                min: playerMinHeight, max: playerMaxHeight, value: height);
+            if (percentageExpandedPlayer < 0) percentageExpandedPlayer = 0;
 
-        final percentageMiniplayer = percentageFromValueInRange(
-            min: playerMinHeight,
-            max: playerMaxHeight * miniplayerPercentageDeclaration +
-                playerMinHeight,
-            value: height);
+            final percentageMiniplayer = percentageFromValueInRange(
+                min: playerMinHeight,
+                max: playerMaxHeight * miniplayerPercentageDeclaration +
+                    playerMinHeight,
+                value: height);
 
-        final elementOpacity = 1 - 1 * percentageMiniplayer;
-        final progressIndicatorHeight = 4 - 4 * percentageMiniplayer;
+            final elementOpacity = 1 - 1 * percentageMiniplayer;
+            final progressIndicatorHeight = 4 - 4 * percentageMiniplayer;
 
-        final playerWidth = valueFromPercentageInRange(
-          min: miniPlayerWidth,
-          max: screenWidth,
-          percentage: percentageExpandedPlayer,
-        );
-
-        final playerHeight = valueFromPercentageInRange(
-          min: kBottomNavigationBarHeight,
-          max: miniPlayerWidth,
-          percentage: percentageExpandedPlayer,
-        );
-
-        if (_chewieController != null) {
-          if (isMiniPlayer || playerWidth < screenWidth) {
-            _chewieController = ChewieController(
-              videoPlayerController: _chewieController!.videoPlayerController,
-              showControls: false,
+            final playerWidth = valueFromPercentageInRange(
+              min: miniPlayerWidth,
+              max: screenWidth,
+              percentage: percentageExpandedPlayer,
             );
-          } else {
-            _chewieController = ChewieController(
-              videoPlayerController: _chewieController!.videoPlayerController,
-              showControls: true,
-            );
-          }
-        }
 
-        final playerWidget = Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: playerWidth,
-              height: playerHeight,
-              color: Colors.green,
-              child: _initializing || _chewieController == null
-                  ? const Center(child: CircularProgressIndicator())
-                  : Chewie(controller: _chewieController!),
-            ),
-            if (isMiniPlayer) ...[
-              const SizedBox(
-                width: 12,
-              ),
-              Expanded(
-                child: Opacity(
-                  opacity: elementOpacity,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Text('Title'),
-                      Text('Description'),
-                    ],
-                  ),
+            final playerHeight = valueFromPercentageInRange(
+              min: kBottomNavigationBarHeight,
+              max: miniPlayerWidth,
+              percentage: percentageExpandedPlayer,
+            );
+
+            if (_chewieController != null) {
+              if (isMiniPlayer || playerWidth < screenWidth) {
+                _chewieController = ChewieController(
+                  videoPlayerController:
+                      _chewieController!.videoPlayerController,
+                  showControls: false,
+                );
+              } else {
+                _chewieController = ChewieController(
+                  videoPlayerController:
+                      _chewieController!.videoPlayerController,
+                  showControls: true,
+                );
+              }
+            }
+
+            final titleWidget = Text(
+              state.video.title,
+              overflow: TextOverflow.ellipsis,
+            );
+            final descriptionWidget = Text(
+              state.video.description,
+              maxLines: isMiniPlayer ? 1 : 2,
+              overflow: TextOverflow.ellipsis,
+            );
+
+            final playerWidget = Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: playerWidth,
+                  height: playerHeight,
+                  color: Colors.green,
+                  child: _initializing || _chewieController == null
+                      ? const Center(child: CircularProgressIndicator())
+                      : Chewie(controller: _chewieController!),
                 ),
-              ),
-              if (_chewieController != null)
-                ValueListenableBuilder(
-                  valueListenable: _chewieController!.videoPlayerController,
-                  builder: (context, value, child) {
-                    final maxDuration = value.duration.inSeconds;
-                    final currentDuration = value.position.inSeconds;
-
-                    final isPlaying = value.isPlaying;
-                    final isFinish = currentDuration == maxDuration;
-
-                    return Opacity(
+                if (isMiniPlayer) ...[
+                  const SizedBox(
+                    width: 12,
+                  ),
+                  Expanded(
+                    child: Opacity(
                       opacity: elementOpacity,
-                      child: Row(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          IconButton(
-                            onPressed: () async {
-                              if (isFinish) {
-                                // videoPlayerInitialized();
-                                return;
-                              }
-
-                              if (isPlaying) {
-                                await _chewieController?.pause();
-                              } else {
-                                await _chewieController?.play();
-                              }
-                            },
-                            icon: Icon(isFinish
-                                ? Icons.loop
-                                : isPlaying
-                                    ? Icons.pause
-                                    : Icons.play_arrow),
-                          ),
+                          titleWidget,
+                          descriptionWidget,
                         ],
                       ),
-                    );
-                  },
-                ),
-              IconButton(
-                onPressed: () async {
-                  await _chewieController?.pause();
-                  setState(() {
-                    _isDimissed = true;
-                  });
-                },
-                icon: const Icon(Icons.close),
-              ),
-              const SizedBox(width: 8),
-            ]
-          ],
-        );
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (isMiniPlayer) ...[
-              Expanded(child: playerWidget),
-              if (_chewieController != null && _chewieController!.isPlaying)
-                SizedBox(
-                  height: progressIndicatorHeight,
-                  child: ValueListenableBuilder(
-                    valueListenable: _chewieController!.videoPlayerController,
-                    builder: (context, value, child) {
-                      final maxDuration = value.duration.inSeconds;
-                      final currentDuration = value.position.inSeconds;
-
-                      final currentPosition = currentDuration / maxDuration;
-
-                      return SizedBox(
-                        height: progressIndicatorHeight,
-                        child: Opacity(
-                          opacity: elementOpacity,
-                          child: LinearProgressIndicator(
-                            value: currentPosition,
-                          ),
-                        ),
-                      );
-                    },
+                    ),
                   ),
-                )
-            ] else ...[
-              playerWidget,
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text('Title'),
-                    Text('Description'),
-                  ],
-                ),
-              ),
-            ]
-          ],
+                  if (_chewieController != null)
+                    ValueListenableBuilder(
+                      valueListenable: _chewieController!.videoPlayerController,
+                      builder: (context, value, child) {
+                        final maxDuration = value.duration.inSeconds;
+                        final currentDuration = value.position.inSeconds;
+
+                        final isPlaying = value.isPlaying;
+                        final isFinish = currentDuration == maxDuration;
+
+                        return Opacity(
+                          opacity: elementOpacity,
+                          child: Row(
+                            children: [
+                              IconButton(
+                                onPressed: () async {
+                                  if (isFinish) {
+                                    // videoPlayerInitialized();
+                                    return;
+                                  }
+
+                                  if (isPlaying) {
+                                    await _chewieController?.pause();
+                                  } else {
+                                    await _chewieController?.play();
+                                  }
+                                },
+                                icon: Icon(isFinish
+                                    ? Icons.loop
+                                    : isPlaying
+                                        ? Icons.pause
+                                        : Icons.play_arrow),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  IconButton(
+                    onPressed: () async {
+                      await _chewieController?.pause();
+                      setState(() {
+                        _isDimissed = true;
+                      });
+                    },
+                    icon: const Icon(Icons.close),
+                  ),
+                  const SizedBox(width: 8),
+                ]
+              ],
+            );
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (isMiniPlayer) ...[
+                  Expanded(child: playerWidget),
+                  if (_chewieController != null && _chewieController!.isPlaying)
+                    SizedBox(
+                      height: progressIndicatorHeight,
+                      child: ValueListenableBuilder(
+                        valueListenable:
+                            _chewieController!.videoPlayerController,
+                        builder: (context, value, child) {
+                          final maxDuration = value.duration.inSeconds;
+                          final currentDuration = value.position.inSeconds;
+
+                          final currentPosition = currentDuration / maxDuration;
+
+                          return SizedBox(
+                            height: progressIndicatorHeight,
+                            child: Opacity(
+                              opacity: elementOpacity,
+                              child: LinearProgressIndicator(
+                                value: currentPosition,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                ] else ...[
+                  playerWidget,
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        titleWidget,
+                        descriptionWidget,
+                      ],
+                    ),
+                  ),
+                ]
+              ],
+            );
+          },
         );
       },
     );
   }
 
-  Future<void> videoPlayerInitialized() async {
-    _videoPlayerController;
-    _videoPlayerController = VideoPlayerController.network(
-      'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+  Future<void> videoPlayerInitialized(Video video) async {
+    _miniplayerController.animateToHeight(state: PanelState.MAX);
+
+    if (_chewieController?.isPlaying ?? false) {
+      _chewieController?.pause();
+    }
+
+    final videoPlayerController = VideoPlayerController.network(
+      video.sources.first,
     );
 
-    setState(() {
-      _initializing = true;
-      _isDimissed = false;
-    });
-    await _videoPlayerController.initialize();
-    createChewieController();
+    _initializing = true;
+    setState(() {});
+
+    await videoPlayerController.initialize();
+
+    createChewieController(videoPlayerController);
+
     _initializing = false;
+    _isDimissed = false;
     setState(() {});
   }
 
-  void createChewieController() {
+  void createChewieController(VideoPlayerController videoPlayerController) {
     _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController,
+      videoPlayerController: videoPlayerController,
       showControls: false,
       autoPlay: true,
     );
-    if (_isDimissed) {
-      _miniplayerController.animateToHeight(state: PanelState.MAX);
-    }
   }
 }
