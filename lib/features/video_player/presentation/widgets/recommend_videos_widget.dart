@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../data/model/video.dart';
 import 'video_item_widget.dart';
 
-class VideoListWidget extends StatelessWidget {
-  const VideoListWidget({super.key});
+class RecommendVideosWidget extends StatelessWidget {
+  const RecommendVideosWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,8 @@ class VideoListWidget extends StatelessWidget {
           final videos = snapshot.data;
           if (videos == null) return const Text('Kosong');
           return ListView.separated(
-            padding: const EdgeInsets.all(16),
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
             itemCount: videos.length,
             separatorBuilder: (BuildContext context, int index) {
               return const Divider(

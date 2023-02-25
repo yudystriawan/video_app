@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:miniplayer/miniplayer.dart';
 import 'package:video_app/features/video_player/data/model/video.dart';
 import 'package:video_app/features/video_player/presentation/bloc/video_player/video_player_bloc.dart';
+import 'package:video_app/features/video_player/presentation/widgets/recommend_videos_widget.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../../core/utils/util.dart';
@@ -224,14 +225,18 @@ class _VideoPlayerState extends State<VideoPlayer> {
                       )
                   ] else ...[
                     playerWidget,
-                    SingleChildScrollView(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          titleWidget,
-                          descriptionWidget,
-                        ],
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            titleWidget,
+                            descriptionWidget,
+                            const RecommendVideosWidget(),
+                          ],
+                        ),
                       ),
                     ),
                   ]
