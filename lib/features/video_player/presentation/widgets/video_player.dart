@@ -45,7 +45,6 @@ class _VideoPlayerState extends State<VideoPlayer> {
     return BlocConsumer<VideoPlayerBloc, VideoPlayerState>(
       listenWhen: (p, c) => p.videoSelected != c.videoSelected,
       listener: (context, state) async {
-        debugPrint('video is null: ${state.videoSelected == null}');
         if (state.videoSelected != null) {
           await videoPlayerInitialized(state.videoSelected!);
         }
@@ -291,6 +290,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
           .read<VideoPlayerBloc>()
           .add(const VideoPlayerEvent.videoStarted(video: null));
     });
+    await _chewieController?.seekTo(Duration.zero);
 
     setState(() {
       _isDimissed = true;
