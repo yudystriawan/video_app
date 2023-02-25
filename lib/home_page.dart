@@ -28,7 +28,6 @@ class HomePage extends StatelessWidget {
           );
 
           final mediaQuery = MediaQuery.of(context);
-          debugPrint('value: ${mediaQuery.padding.bottom}');
 
           final bottomNavHeight =
               kBottomNavigationBarHeight + mediaQuery.padding.bottom;
