@@ -42,9 +42,12 @@ class _VideoPlayerState extends State<VideoPlayer> {
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
 
     return BlocConsumer<VideoPlayerBloc, VideoPlayerState>(
-      listenWhen: (p, c) => p.video != c.video,
+      listenWhen: (p, c) => p.videoSelected != c.videoSelected,
       listener: (context, state) async {
-        await videoPlayerInitialized(state.video);
+        debugPrint('video is null: ${state.videoSelected == null}');
+        if (state.videoSelected != null) {
+          await videoPlayerInitialized(state.videoSelected!);
+        }
       },
       builder: (context, state) {
         return Offstage(
@@ -103,11 +106,11 @@ class _VideoPlayerState extends State<VideoPlayer> {
               }
 
               final titleWidget = Text(
-                state.video.title,
+                state.videoSelected?.title ?? '',
                 overflow: TextOverflow.ellipsis,
               );
               final descriptionWidget = Text(
-                state.video.description,
+                state.videoSelected?.description ?? '',
                 maxLines: isMiniPlayer ? 1 : 2,
                 overflow: TextOverflow.ellipsis,
               );
@@ -278,8 +281,11 @@ class _VideoPlayerState extends State<VideoPlayer> {
   }
 
   Future<void> _dismissPlayer() async {
-    await _chewieController?.pause();
-    _miniplayerController.animateToHeight(state: PanelState.MIN);
+    await _chewieController?.pause().then((value) {
+      context
+          .read<VideoPlayerBloc>()
+          .add(const VideoPlayerEvent.videoStarted(video: null));
+    });
 
     setState(() {
       _isDimissed = true;

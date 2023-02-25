@@ -15,9 +15,11 @@ class VideoItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context
-          .read<VideoPlayerBloc>()
-          .add(VideoPlayerEvent.videoStarted(video)),
+      onTap: () {
+        context
+            .read<VideoPlayerBloc>()
+            .add(VideoPlayerEvent.videoStarted(video: video));
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,

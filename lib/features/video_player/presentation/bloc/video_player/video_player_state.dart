@@ -3,8 +3,8 @@ part of 'video_player_bloc.dart';
 @freezed
 class VideoPlayerState with _$VideoPlayerState {
   const factory VideoPlayerState({
-    required Video video,
+    Video? videoSelected,
   }) = _VideoPlayerState;
 
-  factory VideoPlayerState.initial() => VideoPlayerState(video: Video.empty());
+  factory VideoPlayerState.initial() => const VideoPlayerState();
 }

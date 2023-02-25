@@ -17,8 +17,13 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
   ) {
     return event.map(
       videoStarted: (e) async {
-        if (state.video == e.video) return;
-        emit(state.copyWith(video: e.video));
+        // if (e.video == null) {
+        //   emit(state.copyWith(video: none()));
+        //   return;
+
+        // }
+
+        emit(state.copyWith(videoSelected: e.video));
       },
     );
   }
