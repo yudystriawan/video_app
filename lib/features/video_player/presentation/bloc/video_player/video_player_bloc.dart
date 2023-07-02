@@ -29,14 +29,14 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     // check if selected video different from current video
     final selectedVideo = event.video!;
     final currentVideo = state.currentVideo;
-    final isPlaying = state.isPlaying || state.isResume;
+    final isPlaying = videoPlayerController?.value.isPlaying ?? false;
 
     // play new video
     if (videoPlayerController == null || (selectedVideo != currentVideo)) {
       if (isPlaying) await _resetValue();
 
       emit(state.copyWith(
-        status: VideoPlayerStatus.loading,
+        controller: null,
         currentVideo: null,
       ));
 
@@ -44,9 +44,10 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
         videoPlayerController =
             VideoPlayerController.network(selectedVideo.sources.first);
         await videoPlayerController?.initialize();
+        await videoPlayerController?.play();
 
         emit(state.copyWith(
-          status: VideoPlayerStatus.play,
+          controller: videoPlayerController,
           currentVideo: selectedVideo,
         ));
       } catch (e) {
@@ -56,11 +57,11 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     }
 
     // resume video
-    if (state.isPause) {
+    if (!isPlaying) {
       await _resumeVideo();
       emit(state.copyWith(
         currentVideo: selectedVideo,
-        status: VideoPlayerStatus.resume,
+        controller: videoPlayerController,
       ));
     }
   }
@@ -69,11 +70,11 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     _Stopped event,
     Emitter<VideoPlayerState> emit,
   ) async {
-    if (videoPlayerController != null) {
+    if (state.controller != null) {
       await _resetValue();
 
       emit(state.copyWith(
-        status: VideoPlayerStatus.stop,
+        controller: videoPlayerController,
         currentVideo: null,
       ));
     }
@@ -91,12 +92,12 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     _Paused event,
     Emitter<VideoPlayerState> emit,
   ) async {
-    if (videoPlayerController != null) {
+    if (state.controller != null) {
       await videoPlayerController!.pause();
-      pauseTime = videoPlayerController!.value.position;
+      pauseTime = state.controller!.value.position;
 
       emit(state.copyWith(
-        status: VideoPlayerStatus.pause,
+        controller: videoPlayerController,
       ));
     }
   }
@@ -107,7 +108,7 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
   ) async {
     await _resumeVideo();
     emit(state.copyWith(
-      status: VideoPlayerStatus.resume,
+      controller: videoPlayerController,
     ));
   }
 

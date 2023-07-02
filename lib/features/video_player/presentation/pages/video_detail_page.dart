@@ -153,9 +153,7 @@ class MiniDetailedPlayer extends StatelessWidget {
         return BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
           builder: (context, state) {
             final currentVideo = state.currentVideo;
-            final isPlaying = state.isPlaying || state.isResume;
-            final videoController =
-                context.read<VideoPlayerBloc>().videoPlayerController;
+            final videoController = state.controller;
 
             return Column(
               children: [
@@ -190,28 +188,35 @@ class MiniDetailedPlayer extends StatelessWidget {
                             .read<VideoPlayerBloc>()
                             .add(const VideoPlayerEvent.stopped()),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 3),
-                        child: Opacity(
-                          opacity: elementOpacity,
-                          child: IconButton(
-                            icon: Icon(isPlaying
-                                ? Icons.pause_circle_filled
-                                : Icons.play_circle_filled),
-                            onPressed: () {
-                              if (isPlaying) {
-                                context
-                                    .read<VideoPlayerBloc>()
-                                    .add(const VideoPlayerEvent.paused());
-                                return;
-                              }
+                      ValueListenableBuilder(
+                        valueListenable: state.controller!,
+                        builder: (context, value, child) {
+                          final isPlaying = value.isPlaying;
+                          
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 3),
+                            child: Opacity(
+                              opacity: elementOpacity,
+                              child: IconButton(
+                                icon: Icon(isPlaying
+                                    ? Icons.pause_circle_filled
+                                    : Icons.play_circle_filled),
+                                onPressed: () {
+                                  if (isPlaying) {
+                                    context
+                                        .read<VideoPlayerBloc>()
+                                        .add(const VideoPlayerEvent.paused());
+                                    return;
+                                  }
 
-                              context
-                                  .read<VideoPlayerBloc>()
-                                  .add(const VideoPlayerEvent.resumed());
-                            },
-                          ),
-                        ),
+                                  context
+                                      .read<VideoPlayerBloc>()
+                                      .add(const VideoPlayerEvent.resumed());
+                                },
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

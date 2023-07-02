@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,21 +21,20 @@ class VideoScreen extends StatelessWidget {
     return Stack(
       children: [
         BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
-          buildWhen: (p, c) => p.status != c.status,
+          buildWhen: (p, c) => p.currentVideo != c.currentVideo,
           builder: (context, state) {
-            final videoPlayerController =
-                context.read<VideoPlayerBloc>().videoPlayerController!;
+            debugPrint('hohohoho');
             return Container(
               width: width,
               height: height,
               color: Colors.green,
-              child: state.isLoading
+              child: state.currentVideo == null
                   ? const Center(child: CircularProgressIndicator())
                   : Chewie(
                       controller: ChewieController(
-                        videoPlayerController: videoPlayerController,
-                        startAt: videoPlayerController.value.position,
-                        autoPlay: state.isPlaying,
+                        videoPlayerController: state.controller!,
+                        startAt: state.controller!.value.position,
+                        autoPlay: state.controller?.value.isPlaying ?? false,
                         showControls: showControl,
                       ),
                     ),
