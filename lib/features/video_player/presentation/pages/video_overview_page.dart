@@ -16,7 +16,7 @@ class VideoOverviewPage extends StatelessWidget {
       listenWhen: (p, c) => p.status != c.status,
       listener: (context, state) {
         if(state.isPlaying){
-          context.router.push(VideoPlayerRoute());
+          context.router.push(const VideoDetailRoute());
         }
       },
       child: Scaffold(
@@ -24,7 +24,7 @@ class VideoOverviewPage extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Videos'),
         ),
-        body: VideoListWidget(),
+        body: const VideoListWidget(),
       ),
     );
   }

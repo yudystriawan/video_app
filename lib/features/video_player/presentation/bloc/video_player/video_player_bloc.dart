@@ -12,10 +12,12 @@ part 'video_player_state.dart';
 
 class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
   VideoPlayerController? videoPlayerController;
-  ChewieController? chewieController;
+  Duration pauseTime = Duration.zero;
 
   VideoPlayerBloc() : super(VideoPlayerState.initial()) {
     on<_Played>(_onPlayed);
+    on<_Stopped>(_onStopped);
+    on<_Paused>(_onPaused);
   }
 
   void _onPlayed(
@@ -23,21 +25,11 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     Emitter<VideoPlayerState> emit,
   ) async {
     // check if selected video different from current video
-    final selectedVideo = event.video;
+    final selectedVideo = event.video!;
     final currentVideo = state.currentVideo;
-    if (selectedVideo != null) {
-      
-      if (selectedVideo == currentVideo) {
-        emit(state.copyWith(
-          currentVideo: currentVideo,
-          status: VideoPlayerStatus.resume,
-        ));
-        return;
-      }
 
-      await videoPlayerController?.pause();
-      await videoPlayerController?.dispose();
-
+    // play new video
+    if (videoPlayerController == null || (selectedVideo != currentVideo)) {
       emit(state.copyWith(
         status: VideoPlayerStatus.loading,
         currentVideo: null,
@@ -47,9 +39,6 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
         videoPlayerController =
             VideoPlayerController.network(selectedVideo.sources.first);
         await videoPlayerController?.initialize();
-        chewieController = ChewieController(
-          videoPlayerController: videoPlayerController!,
-        );
 
         emit(state.copyWith(
           status: VideoPlayerStatus.play,
@@ -58,13 +47,58 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
       } catch (e) {
         log('error occured', error: e);
       }
+      return;
+    }
+
+    // resume video
+    await videoPlayerController!.seekTo(pauseTime);
+    await videoPlayerController!.play();
+    emit(state.copyWith(
+      currentVideo: currentVideo,
+      status: VideoPlayerStatus.resume,
+    ));
+  }
+
+  void _onStopped(
+    _Stopped event,
+    Emitter<VideoPlayerState> emit,
+  ) async {
+    if (videoPlayerController != null) {
+      await videoPlayerController?.pause();
+      await videoPlayerController?.dispose();
+
+      _resetValue();
+
+      emit(state.copyWith(
+        status: VideoPlayerStatus.stop,
+        currentVideo: null,
+      ));
+    }
+  }
+
+  void _resetValue() {
+    videoPlayerController = null;
+    pauseTime = Duration.zero;
+  }
+
+  void _onPaused(
+    _Paused event,
+    Emitter<VideoPlayerState> emit,
+  ) async {
+    if (videoPlayerController != null) {
+      await videoPlayerController!.pause();
+      pauseTime = videoPlayerController!.value.duration;
+
+      emit(state.copyWith(
+        status: VideoPlayerStatus.pause,
+      ));
     }
   }
 
   @override
   Future<void> close() {
     videoPlayerController?.dispose();
-    chewieController?.dispose();
+    _resetValue();
     return super.close();
   }
 }
