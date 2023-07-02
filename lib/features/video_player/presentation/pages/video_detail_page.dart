@@ -14,9 +14,17 @@ class VideoDetailPage extends StatefulWidget {
 }
 
 class _VideoDetailPageState extends State<VideoDetailPage> {
+  late VideoPlayerBloc _videoPlayerBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _videoPlayerBloc = context.read<VideoPlayerBloc>();
+  }
+
   @override
   void dispose() {
-    context.read<VideoPlayerBloc>().add(const VideoPlayerEvent.stopped());
+    _videoPlayerBloc.add(const VideoPlayerEvent.stopped());
     super.dispose();
   }
 
