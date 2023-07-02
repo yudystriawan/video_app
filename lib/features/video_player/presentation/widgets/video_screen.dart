@@ -25,10 +25,8 @@ class VideoScreen extends StatelessWidget {
         BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
           buildWhen: (p, c) => p.status != c.status,
           builder: (context, state) {
-            final videoPlayerController = context
-                            .read<VideoPlayerBloc>()
-                            .videoPlayerController!;
-            log('durationz: ${videoPlayerController.value.position.toString()}');
+            final videoPlayerController =
+                context.read<VideoPlayerBloc>().videoPlayerController!;
             return Container(
               width: width,
               height: height,
@@ -41,7 +39,6 @@ class VideoScreen extends StatelessWidget {
                         startAt: videoPlayerController.value.position,
                         autoPlay: state.isPlaying,
                         showControls: showControl,
-                        
                       ),
                     ),
             );

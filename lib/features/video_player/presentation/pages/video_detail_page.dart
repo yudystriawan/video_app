@@ -5,6 +5,7 @@ import 'package:miniplayer/miniplayer.dart';
 
 import 'package:video_app/features/video_player/presentation/bloc/mini_player/mini_player_bloc.dart';
 import 'package:video_app/features/video_player/presentation/widgets/video_screen.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../../../core/utils/util.dart';
 import '../bloc/video_player/video_player_bloc.dart';
@@ -153,6 +154,9 @@ class MiniDetailedPlayer extends StatelessWidget {
           builder: (context, state) {
             final currentVideo = state.currentVideo;
             final isPlaying = state.isPlaying || state.isResume;
+            final videoController =
+                context.read<VideoPlayerBloc>().videoPlayerController;
+
             return Column(
               children: [
                 Expanded(
@@ -181,10 +185,10 @@ class MiniDetailedPlayer extends StatelessWidget {
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.close),
+                        icon: const Icon(Icons.close),
                         onPressed: () => context
                             .read<VideoPlayerBloc>()
-                            .add(VideoPlayerEvent.stopped()),
+                            .add(const VideoPlayerEvent.stopped()),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(right: 3),
@@ -198,13 +202,13 @@ class MiniDetailedPlayer extends StatelessWidget {
                               if (isPlaying) {
                                 context
                                     .read<VideoPlayerBloc>()
-                                    .add(VideoPlayerEvent.paused());
+                                    .add(const VideoPlayerEvent.paused());
                                 return;
                               }
 
                               context
                                   .read<VideoPlayerBloc>()
-                                  .add(VideoPlayerEvent.resumed());
+                                  .add(const VideoPlayerEvent.resumed());
                             },
                           ),
                         ),
@@ -216,7 +220,23 @@ class MiniDetailedPlayer extends StatelessWidget {
                   height: progressIndicatorHeight,
                   child: Opacity(
                     opacity: elementOpacity,
-                    child: const LinearProgressIndicator(value: 0.3),
+                    child: ValueListenableBuilder(
+                      valueListenable: videoController!,
+                      builder: (
+                        BuildContext context,
+                        VideoPlayerValue value,
+                        Widget? child,
+                      ) {
+                        final durationLinear = percentageFromDuration(
+                          videoController.value.position,
+                          Duration.zero,
+                          videoController.value.duration,
+                        );
+                        return LinearProgressIndicator(
+                          value: durationLinear,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],
