@@ -93,6 +93,7 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     Emitter<VideoPlayerState> emit,
   ) async {
     if (state.controller != null) {
+      if (!state.controller!.value.isPlaying) return;
       await videoPlayerController!.pause();
       pauseTime = state.controller!.value.position;
 

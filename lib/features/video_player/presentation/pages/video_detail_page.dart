@@ -1,33 +1,47 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:miniplayer/miniplayer.dart';
 import 'package:video_player/video_player.dart';
 
-import 'package:video_app/features/video_player/presentation/bloc/mini_player/mini_player_bloc.dart';
-import 'package:video_app/features/video_player/presentation/widgets/video_screen.dart';
-
 import '../../../../core/utils/util.dart';
+import '../bloc/mini_player/mini_player_bloc.dart';
 import '../bloc/video_player/video_player_bloc.dart';
+import '../widgets/video_screen.dart';
 
 @RoutePage()
-class VideoDetailPage extends StatelessWidget {
+class VideoDetailPage extends StatefulWidget {
   const VideoDetailPage({super.key});
+
+  @override
+  State<VideoDetailPage> createState() => _VideoDetailPageState();
+}
+
+class _VideoDetailPageState extends State<VideoDetailPage> {
+  VideoPlayerController? videoPlayerController;
+
+  @override
+  void initState() {
+    super.initState();
+    videoPlayerController = context.read<VideoPlayerBloc>().state.controller;
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
       buildWhen: (p, c) => p.currentVideo != c.currentVideo,
       builder: (context, state) {
-        final videoController = state.controller;
-        
+        ChewieController chewieController = ChewieController(
+          videoPlayerController: videoPlayerController!,
+        );
+
         return BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
           builder: (context, state) {
             return Miniplayer(
               minHeight: state.playerMinHeight,
               maxHeight: state.playerMaxHeight,
               builder: (height, percentage) {
-                debugPrint('hohox');
                 final isMiniplayer =
                     percentage < miniplayerPercentageDeclaration;
                 final width = MediaQuery.of(context).size.width;
@@ -37,13 +51,13 @@ class VideoDetailPage extends StatelessWidget {
                   return FullSizeDetailedPlayer(
                     height: height,
                     maxPlayerSize: maxPlayerSize,
-                    controller: videoController,
+                    controller: chewieController,
                   );
                 }
                 return MiniDetailedPlayer(
                   height: height,
                   maxPlayerSize: maxPlayerSize,
-                  controller: videoController,
+                  controller: chewieController.copyWith(showControls: false),
                 );
               },
             );
@@ -64,7 +78,7 @@ class FullSizeDetailedPlayer extends StatelessWidget {
 
   final double height;
   final double maxPlayerSize;
-  final VideoPlayerController? controller;
+  final ChewieController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +148,7 @@ class MiniDetailedPlayer extends StatelessWidget {
 
   final double height;
   final double maxPlayerSize;
-  final VideoPlayerController? controller;
+  final ChewieController? controller;
 
   @override
   Widget build(BuildContext context) {

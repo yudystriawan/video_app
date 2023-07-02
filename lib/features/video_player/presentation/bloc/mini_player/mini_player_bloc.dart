@@ -1,11 +1,10 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
-import 'package:miniplayer/miniplayer.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:miniplayer/miniplayer.dart';
 
+part 'mini_player_bloc.freezed.dart';
 part 'mini_player_event.dart';
 part 'mini_player_state.dart';
-part 'mini_player_bloc.freezed.dart';
 
 double miniplayerPercentageDeclaration = 0.2;
 

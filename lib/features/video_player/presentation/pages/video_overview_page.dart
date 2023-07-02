@@ -1,12 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:video_app/features/video_player/presentation/pages/video_detail_page.dart';
-import 'package:video_app/features/video_player/presentation/widgets/video_list_widget.dart';
-import 'package:video_app/router/router.dart';
 
-import '../bloc/mini_player/mini_player_bloc.dart';
 import '../bloc/video_player/video_player_bloc.dart';
+import '../widgets/video_list_widget.dart';
+import 'video_detail_page.dart';
 
 @RoutePage()
 class VideoOverviewPage extends StatefulWidget {

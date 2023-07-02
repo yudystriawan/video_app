@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:video_app/core/utils/bloc_observer.dart';
-import 'package:video_app/router/router.dart';
 
+import 'core/utils/bloc_observer.dart';
 import 'features/video_player/presentation/bloc/mini_player/mini_player_bloc.dart';
 import 'features/video_player/presentation/bloc/video_player/video_player_bloc.dart';
-import 'home_page.dart';
+import 'router/router.dart';
 
 void main() {
   setupBlocObserver();

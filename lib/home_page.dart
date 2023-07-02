@@ -1,10 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:video_app/features/video_player/presentation/pages/video_overview_page.dart';
-import 'package:video_app/features/video_player/presentation/widgets/video_list_widget.dart';
-import 'package:video_app/features/video_player/presentation/widgets/video_player.dart';
-import 'package:video_app/router/router.dart';
+import 'features/video_player/presentation/pages/video_overview_page.dart';
+import 'features/video_player/presentation/widgets/video_list_widget.dart';
+import 'features/video_player/presentation/widgets/video_player.dart';
+import 'router/router.dart';
 
 import 'core/utils/util.dart';
 import 'features/video_player/presentation/bloc/mini_player/mini_player_bloc.dart';
