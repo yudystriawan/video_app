@@ -22,6 +22,12 @@ class HomePage extends StatelessWidget {
       bottomNavigationBar: ValueListenableBuilder(
         valueListenable: playerExpandProgress,
         builder: (context, height, child) {
+          final isLandscape =
+              MediaQuery.of(context).orientation == Orientation.landscape;
+          if (isLandscape) {
+            return const SizedBox();
+          }
+
           final value = percentageFromValueInRange(
             min: playerMinHeight,
             max: playerMaxHeight,
@@ -82,6 +88,27 @@ class HomeScaffold extends StatelessWidget {
         title: const Text('Home'),
       ),
       body: const VideoListWidget(),
+      // Column(
+      //   children: [
+      //     ElevatedButton(
+      //       onPressed: () {
+      //         SystemChrome.setPreferredOrientations([
+      //           DeviceOrientation.landscapeLeft,
+      //           DeviceOrientation.landscapeRight
+      //         ]);
+      //       },
+      //       child: const Text('landscape'),
+      //     ),
+      //     ElevatedButton(
+      //       onPressed: () {
+      //         SystemChrome.setPreferredOrientations([
+      //           DeviceOrientation.portraitUp,
+      //         ]);
+      //       },
+      //       child: const Text('potrait'),
+      //     ),
+      //   ],
+      // ),
     );
   }
 }
