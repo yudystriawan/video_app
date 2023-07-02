@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,10 +11,12 @@ class VideoScreen extends StatelessWidget {
     Key? key,
     required this.width,
     required this.height,
+    this.showControl = true,
   }) : super(key: key);
 
   final double width;
   final double height;
+  final bool showControl;
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +25,10 @@ class VideoScreen extends StatelessWidget {
         BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
           buildWhen: (p, c) => p.status != c.status,
           builder: (context, state) {
+            final videoPlayerController = context
+                            .read<VideoPlayerBloc>()
+                            .videoPlayerController!;
+            log('durationz: ${videoPlayerController.value.position.toString()}');
             return Container(
               width: width,
               height: height,
@@ -29,10 +37,11 @@ class VideoScreen extends StatelessWidget {
                   ? const Center(child: CircularProgressIndicator())
                   : Chewie(
                       controller: ChewieController(
-                        videoPlayerController: context
-                            .read<VideoPlayerBloc>()
-                            .videoPlayerController!,
+                        videoPlayerController: videoPlayerController,
+                        startAt: videoPlayerController.value.position,
                         autoPlay: state.isPlaying,
+                        showControls: showControl,
+                        
                       ),
                     ),
             );

@@ -1,11 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_app/features/video_player/presentation/pages/video_overview_page.dart';
 import 'package:video_app/features/video_player/presentation/widgets/video_list_widget.dart';
 import 'package:video_app/features/video_player/presentation/widgets/video_player.dart';
 import 'package:video_app/router/router.dart';
 
 import 'core/utils/util.dart';
+import 'features/video_player/presentation/bloc/mini_player/mini_player_bloc.dart';
 
 // class HomePage extends StatelessWidget {
 //   const HomePage({super.key});
@@ -122,6 +124,13 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const VideoOverviewPage();
+    final height = MediaQuery.of(context).size.height;
+
+    context.read<MiniPlayerBloc>().add(MiniPlayerEvent.initialized(
+          min: 72,
+          max: height,
+        ));
+
+    return VideoOverviewPage();
   }
 }

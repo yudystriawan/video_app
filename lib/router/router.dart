@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 
-import '../features/video_player/presentation/pages/video_full_screen_page.dart';
 import '../features/video_player/presentation/pages/video_overview_page.dart';
 import '../features/video_player/presentation/pages/video_detail_page.dart';
 import '../home_page.dart';
