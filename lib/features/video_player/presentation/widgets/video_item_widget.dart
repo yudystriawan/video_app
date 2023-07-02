@@ -18,7 +18,7 @@ class VideoItemWidget extends StatelessWidget {
       onTap: () {
         context
             .read<VideoPlayerBloc>()
-            .add(VideoPlayerEvent.videoStarted(video: video));
+            .add(VideoPlayerEvent.played(video: video));
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
