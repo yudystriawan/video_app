@@ -2,52 +2,50 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:miniplayer/miniplayer.dart';
+import 'package:video_player/video_player.dart';
 
 import 'package:video_app/features/video_player/presentation/bloc/mini_player/mini_player_bloc.dart';
 import 'package:video_app/features/video_player/presentation/widgets/video_screen.dart';
-import 'package:video_player/video_player.dart';
 
 import '../../../../core/utils/util.dart';
 import '../bloc/video_player/video_player_bloc.dart';
 
 @RoutePage()
-class VideoDetailPage extends StatefulWidget {
+class VideoDetailPage extends StatelessWidget {
   const VideoDetailPage({super.key});
 
   @override
-  State<VideoDetailPage> createState() => _VideoDetailPageState();
-}
-
-class _VideoDetailPageState extends State<VideoDetailPage> {
-  late VideoPlayerBloc _videoPlayerBloc;
-
-  @override
-  void initState() {
-    super.initState();
-    _videoPlayerBloc = context.read<VideoPlayerBloc>();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
+    return BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
+      buildWhen: (p, c) => p.currentVideo != c.currentVideo,
       builder: (context, state) {
-        return Miniplayer(
-          minHeight: state.playerMinHeight,
-          maxHeight: state.playerMaxHeight,
-          builder: (height, percentage) {
-            final isMiniplayer = percentage < miniplayerPercentageDeclaration;
-            final width = MediaQuery.of(context).size.width;
-            final maxPlayerSize = width * 0.4;
+        final videoController = state.controller;
+        
+        return BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
+          builder: (context, state) {
+            return Miniplayer(
+              minHeight: state.playerMinHeight,
+              maxHeight: state.playerMaxHeight,
+              builder: (height, percentage) {
+                debugPrint('hohox');
+                final isMiniplayer =
+                    percentage < miniplayerPercentageDeclaration;
+                final width = MediaQuery.of(context).size.width;
+                final maxPlayerSize = width * 0.4;
 
-            if (!isMiniplayer) {
-              return FullSizeDetailedPlayer(
-                height: height,
-                maxPlayerSize: maxPlayerSize,
-              );
-            }
-            return MiniDetailedPlayer(
-              height: height,
-              maxPlayerSize: maxPlayerSize,
+                if (!isMiniplayer) {
+                  return FullSizeDetailedPlayer(
+                    height: height,
+                    maxPlayerSize: maxPlayerSize,
+                    controller: videoController,
+                  );
+                }
+                return MiniDetailedPlayer(
+                  height: height,
+                  maxPlayerSize: maxPlayerSize,
+                  controller: videoController,
+                );
+              },
             );
           },
         );
@@ -61,10 +59,12 @@ class FullSizeDetailedPlayer extends StatelessWidget {
     Key? key,
     required this.height,
     required this.maxPlayerSize,
+    this.controller,
   }) : super(key: key);
 
   final double height;
   final double maxPlayerSize;
+  final VideoPlayerController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +93,7 @@ class FullSizeDetailedPlayer extends StatelessWidget {
               child: VideoScreen(
                 width: width,
                 height: playerheight,
+                controller: controller,
               ),
             ),
             BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
@@ -128,10 +129,12 @@ class MiniDetailedPlayer extends StatelessWidget {
     Key? key,
     required this.height,
     required this.maxPlayerSize,
+    this.controller,
   }) : super(key: key);
 
   final double height;
   final double maxPlayerSize;
+  final VideoPlayerController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -151,6 +154,7 @@ class MiniDetailedPlayer extends StatelessWidget {
         final progressIndicatorHeight = 4 - 4 * percentageMiniplayer;
 
         return BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
+          buildWhen: (p, c) => p.currentVideo != c.currentVideo,
           builder: (context, state) {
             final currentVideo = state.currentVideo;
             final videoController = state.controller;
@@ -164,6 +168,7 @@ class MiniDetailedPlayer extends StatelessWidget {
                         width: maxPlayerSize,
                         height: maxPlayerSize + progressIndicatorHeight,
                         showControl: false,
+                        controller: controller,
                       ),
                       Expanded(
                         child: Padding(
@@ -192,7 +197,7 @@ class MiniDetailedPlayer extends StatelessWidget {
                         valueListenable: state.controller!,
                         builder: (context, value, child) {
                           final isPlaying = value.isPlaying;
-                          
+
                           return Padding(
                             padding: const EdgeInsets.only(right: 3),
                             child: Opacity(
