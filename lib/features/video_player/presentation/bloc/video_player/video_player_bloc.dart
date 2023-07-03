@@ -115,6 +115,7 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
 
   Future<void> _resumeVideo() async {
     await videoPlayerController!.seekTo(pauseTime);
+    pauseTime = Duration.zero;
     await videoPlayerController!.play();
   }
 

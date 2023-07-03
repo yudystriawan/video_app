@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 
@@ -28,6 +30,10 @@ class VideoScreen extends StatelessWidget {
               : ValueListenableBuilder(
                   valueListenable: controller!.videoPlayerController,
                   builder: (context, value, child) {
+                    // end duration
+                    if (value.position==value.duration) {
+                      
+                    }
                     return Stack(
                       children: [
                         Chewie(controller: controller!),
