@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file: depend_on_referenced_packages, invalid_use_of_protected_member
 
 import 'dart:developer';
 
@@ -14,6 +14,7 @@ part 'video_player_state.dart';
 class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
   VideoPlayerController? videoPlayerController;
   Duration pauseTime = Duration.zero;
+  bool _isPLaying = false;
 
   VideoPlayerBloc() : super(VideoPlayerState.initial()) {
     on<_Played>(_onPlayed);
@@ -40,8 +41,15 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
       try {
         videoPlayerController =
             VideoPlayerController.network(selectedVideo.sources.first);
-        await videoPlayerController?.initialize();
-        await videoPlayerController?.play();
+        await videoPlayerController!.initialize();
+        await videoPlayerController!.play();
+
+        // add listener
+        if (videoPlayerController!.hasListeners) {
+          videoPlayerController!.removeListener(setupListener);
+        }
+
+        videoPlayerController!.addListener(setupListener);
 
         emit(state.copyWith(
           currentVideo: selectedVideo,
@@ -108,8 +116,21 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
 
   @override
   Future<void> close() {
+    videoPlayerController?.removeListener(setupListener);
     videoPlayerController?.dispose();
     _resetValue();
     return super.close();
+  }
+
+  void setupListener() {
+    var isPlaying = videoPlayerController?.value.isPlaying ?? false;
+    if (_isPLaying != isPlaying) {
+      _isPLaying = isPlaying;
+
+      // when stop or pause capture current player position
+      if (!_isPLaying) {
+        pauseTime = videoPlayerController?.value.position ?? Duration.zero;
+      }
+    }
   }
 }
