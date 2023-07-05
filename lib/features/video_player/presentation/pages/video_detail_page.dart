@@ -24,7 +24,8 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
   @override
   void initState() {
     super.initState();
-    videoPlayerController = context.read<VideoPlayerBloc>().state.controller;
+    videoPlayerController =
+        context.read<VideoPlayerBloc>().videoPlayerController;
   }
 
   @override
@@ -68,7 +69,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
   }
 }
 
-class FullSizeDetailedPlayer extends StatelessWidget {
+class FullSizeDetailedPlayer extends StatefulWidget {
   const FullSizeDetailedPlayer({
     Key? key,
     required this.height,
@@ -81,6 +82,20 @@ class FullSizeDetailedPlayer extends StatelessWidget {
   final ChewieController? controller;
 
   @override
+  State<FullSizeDetailedPlayer> createState() => _FullSizeDetailedPlayerState();
+}
+
+class _FullSizeDetailedPlayerState extends State<FullSizeDetailedPlayer> {
+  VideoPlayerController? videoPlayerController;
+
+  @override
+  void initState() {
+    super.initState();
+    videoPlayerController =
+        context.read<VideoPlayerBloc>().videoPlayerController;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
       builder: (context, state) {
@@ -90,14 +105,14 @@ class FullSizeDetailedPlayer extends StatelessWidget {
           min: state.playerMaxHeight * miniplayerPercentageDeclaration +
               state.playerMinHeight,
           max: state.playerMaxHeight,
-          value: height,
+          value: widget.height,
         );
         if (percentageExpandedPlayer < 0) percentageExpandedPlayer = 0;
         final paddingVertical = valueFromPercentageInRange(
             min: 0, max: 10, percentage: percentageExpandedPlayer);
-        final double heightWithoutPadding = height - paddingVertical * 2;
-        final double playerheight = heightWithoutPadding > maxPlayerSize
-            ? maxPlayerSize
+        final double heightWithoutPadding = widget.height - paddingVertical * 2;
+        final double playerheight = heightWithoutPadding > widget.maxPlayerSize
+            ? widget.maxPlayerSize
             : heightWithoutPadding;
 
         return Column(
@@ -107,7 +122,7 @@ class FullSizeDetailedPlayer extends StatelessWidget {
               child: VideoScreen(
                 width: width,
                 height: playerheight,
-                controller: controller,
+                controller: widget.controller,
               ),
             ),
             BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
@@ -138,7 +153,7 @@ class FullSizeDetailedPlayer extends StatelessWidget {
   }
 }
 
-class MiniDetailedPlayer extends StatelessWidget {
+class MiniDetailedPlayer extends StatefulWidget {
   const MiniDetailedPlayer({
     Key? key,
     required this.height,
@@ -151,6 +166,20 @@ class MiniDetailedPlayer extends StatelessWidget {
   final ChewieController? controller;
 
   @override
+  State<MiniDetailedPlayer> createState() => _MiniDetailedPlayerState();
+}
+
+class _MiniDetailedPlayerState extends State<MiniDetailedPlayer> {
+  VideoPlayerController? videoPlayerController;
+
+  @override
+  void initState() {
+    super.initState();
+    videoPlayerController =
+        context.read<VideoPlayerBloc>().videoPlayerController;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
       builder: (context, state) {
@@ -161,7 +190,7 @@ class MiniDetailedPlayer extends StatelessWidget {
           min: playerMinHeight,
           max: playerMaxHeight * miniplayerPercentageDeclaration +
               playerMinHeight,
-          value: height,
+          value: widget.height,
         );
 
         final elementOpacity = 1 - 1 * percentageMiniplayer;
@@ -171,7 +200,6 @@ class MiniDetailedPlayer extends StatelessWidget {
           buildWhen: (p, c) => p.currentVideo != c.currentVideo,
           builder: (context, state) {
             final currentVideo = state.currentVideo;
-            final videoController = state.controller;
 
             return Column(
               children: [
@@ -179,10 +207,10 @@ class MiniDetailedPlayer extends StatelessWidget {
                   child: Row(
                     children: [
                       VideoScreen(
-                        width: maxPlayerSize,
-                        height: maxPlayerSize + progressIndicatorHeight,
+                        width: widget.maxPlayerSize,
+                        height: widget.maxPlayerSize + progressIndicatorHeight,
                         showControl: false,
-                        controller: controller,
+                        controller: widget.controller,
                       ),
                       Expanded(
                         child: Padding(
@@ -208,7 +236,7 @@ class MiniDetailedPlayer extends StatelessWidget {
                             .add(const VideoPlayerEvent.stopped()),
                       ),
                       ValueListenableBuilder(
-                        valueListenable: state.controller!,
+                        valueListenable: videoPlayerController!,
                         builder: (context, value, child) {
                           final isPlaying = value.isPlaying;
 
@@ -245,16 +273,16 @@ class MiniDetailedPlayer extends StatelessWidget {
                   child: Opacity(
                     opacity: elementOpacity,
                     child: ValueListenableBuilder(
-                      valueListenable: videoController!,
+                      valueListenable: videoPlayerController!,
                       builder: (
                         BuildContext context,
                         VideoPlayerValue value,
                         Widget? child,
                       ) {
                         final durationLinear = percentageFromDuration(
-                          videoController.value.position,
+                          value.position,
                           Duration.zero,
-                          videoController.value.duration,
+                          value.duration,
                         );
                         return LinearProgressIndicator(
                           value: durationLinear,

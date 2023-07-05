@@ -29,14 +29,14 @@ class _VideoOverviewPageState extends State<VideoOverviewPage> {
           Column(
             children: [
               AppBar(title: const Text('Videos')),
-              Expanded(child: const VideoListWidget()),
+              const Expanded(child: VideoListWidget()),
             ],
           ),
           BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
             buildWhen: (p, c) => p.currentVideo != c.currentVideo,
             builder: (context, state) {
               if (state.currentVideo == null) return Container();
-              return VideoDetailPage();
+              return const VideoDetailPage();
             },
           ),
         ],

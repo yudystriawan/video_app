@@ -35,10 +35,7 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     if (videoPlayerController == null || (selectedVideo != currentVideo)) {
       if (isPlaying) await _resetValue();
 
-      emit(state.copyWith(
-        controller: null,
-        currentVideo: null,
-      ));
+      emit(state.copyWith(currentVideo: null));
 
       try {
         videoPlayerController =
@@ -47,7 +44,6 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
         await videoPlayerController?.play();
 
         emit(state.copyWith(
-          controller: videoPlayerController,
           currentVideo: selectedVideo,
         ));
       } catch (e) {
@@ -61,7 +57,6 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
       await _resumeVideo();
       emit(state.copyWith(
         currentVideo: selectedVideo,
-        controller: videoPlayerController,
       ));
     }
   }
@@ -70,11 +65,10 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     _Stopped event,
     Emitter<VideoPlayerState> emit,
   ) async {
-    if (state.controller != null) {
+    if (videoPlayerController != null) {
       await _resetValue();
 
       emit(state.copyWith(
-        controller: videoPlayerController,
         currentVideo: null,
       ));
     }
@@ -92,14 +86,10 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     _Paused event,
     Emitter<VideoPlayerState> emit,
   ) async {
-    if (state.controller != null) {
-      if (!state.controller!.value.isPlaying) return;
+    if (videoPlayerController != null) {
+      if (!videoPlayerController!.value.isPlaying) return;
       await videoPlayerController!.pause();
-      pauseTime = state.controller!.value.position;
-
-      emit(state.copyWith(
-        controller: videoPlayerController,
-      ));
+      pauseTime = videoPlayerController!.value.position;
     }
   }
 
@@ -108,9 +98,6 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     Emitter<VideoPlayerState> emit,
   ) async {
     await _resumeVideo();
-    emit(state.copyWith(
-      controller: videoPlayerController,
-    ));
   }
 
   Future<void> _resumeVideo() async {
