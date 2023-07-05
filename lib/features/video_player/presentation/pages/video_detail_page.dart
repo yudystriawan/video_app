@@ -1,3 +1,4 @@
+
 import 'package:auto_route/auto_route.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ class VideoDetailPage extends StatelessWidget {
             return Miniplayer(
               valueNotifier:
                   context.watch<MiniPlayerBloc>().playerExpandProgress,
+              controller: context.watch<MiniPlayerBloc>().miniplayerController,
               minHeight: state.playerMinHeight,
               maxHeight: state.playerMaxHeight,
               builder: (height, percentage) {
