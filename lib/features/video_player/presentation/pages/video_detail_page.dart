@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
@@ -13,22 +11,8 @@ import '../bloc/video_player/video_player_bloc.dart';
 import '../widgets/video_screen.dart';
 
 @RoutePage()
-class VideoDetailPage extends StatefulWidget {
+class VideoDetailPage extends StatelessWidget {
   const VideoDetailPage({super.key});
-
-  @override
-  State<VideoDetailPage> createState() => _VideoDetailPageState();
-}
-
-class _VideoDetailPageState extends State<VideoDetailPage> {
-  VideoPlayerController? videoPlayerController;
-
-  @override
-  void initState() {
-    super.initState();
-    videoPlayerController =
-        context.read<VideoPlayerBloc>().videoPlayerController;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +20,8 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
       buildWhen: (p, c) => p.currentVideo != c.currentVideo,
       builder: (context, state) {
         ChewieController chewieController = ChewieController(
-          videoPlayerController: videoPlayerController!,
+          videoPlayerController:
+              context.watch<VideoPlayerBloc>().videoPlayerController!,
         );
 
         return BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
@@ -73,7 +58,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
   }
 }
 
-class FullSizeDetailedPlayer extends StatefulWidget {
+class FullSizeDetailedPlayer extends StatelessWidget {
   const FullSizeDetailedPlayer({
     Key? key,
     required this.height,
@@ -86,20 +71,6 @@ class FullSizeDetailedPlayer extends StatefulWidget {
   final ChewieController? controller;
 
   @override
-  State<FullSizeDetailedPlayer> createState() => _FullSizeDetailedPlayerState();
-}
-
-class _FullSizeDetailedPlayerState extends State<FullSizeDetailedPlayer> {
-  VideoPlayerController? videoPlayerController;
-
-  @override
-  void initState() {
-    super.initState();
-    videoPlayerController =
-        context.read<VideoPlayerBloc>().videoPlayerController;
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
       builder: (context, state) {
@@ -109,14 +80,14 @@ class _FullSizeDetailedPlayerState extends State<FullSizeDetailedPlayer> {
           min: state.playerMaxHeight * miniplayerPercentageDeclaration +
               state.playerMinHeight,
           max: state.playerMaxHeight,
-          value: widget.height,
+          value: height,
         );
         if (percentageExpandedPlayer < 0) percentageExpandedPlayer = 0;
         final paddingVertical = valueFromPercentageInRange(
             min: 0, max: 10, percentage: percentageExpandedPlayer);
-        final double heightWithoutPadding = widget.height - paddingVertical * 2;
-        final double playerheight = heightWithoutPadding > widget.maxPlayerSize
-            ? widget.maxPlayerSize
+        final double heightWithoutPadding = height - paddingVertical * 2;
+        final double playerheight = heightWithoutPadding > maxPlayerSize
+            ? maxPlayerSize
             : heightWithoutPadding;
 
         return Column(
@@ -126,7 +97,7 @@ class _FullSizeDetailedPlayerState extends State<FullSizeDetailedPlayer> {
               child: VideoScreen(
                 width: width,
                 height: playerheight,
-                controller: widget.controller,
+                controller: controller,
               ),
             ),
             BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
@@ -157,7 +128,7 @@ class _FullSizeDetailedPlayerState extends State<FullSizeDetailedPlayer> {
   }
 }
 
-class MiniDetailedPlayer extends StatefulWidget {
+class MiniDetailedPlayer extends StatelessWidget {
   const MiniDetailedPlayer({
     Key? key,
     required this.height,
@@ -170,20 +141,6 @@ class MiniDetailedPlayer extends StatefulWidget {
   final ChewieController? controller;
 
   @override
-  State<MiniDetailedPlayer> createState() => _MiniDetailedPlayerState();
-}
-
-class _MiniDetailedPlayerState extends State<MiniDetailedPlayer> {
-  VideoPlayerController? videoPlayerController;
-
-  @override
-  void initState() {
-    super.initState();
-    videoPlayerController =
-        context.read<VideoPlayerBloc>().videoPlayerController;
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
       builder: (context, state) {
@@ -194,7 +151,7 @@ class _MiniDetailedPlayerState extends State<MiniDetailedPlayer> {
           min: playerMinHeight,
           max: playerMaxHeight * miniplayerPercentageDeclaration +
               playerMinHeight,
-          value: widget.height,
+          value: height,
         );
 
         final elementOpacity = 1 - 1 * percentageMiniplayer;
@@ -211,10 +168,10 @@ class _MiniDetailedPlayerState extends State<MiniDetailedPlayer> {
                   child: Row(
                     children: [
                       VideoScreen(
-                        width: widget.maxPlayerSize,
-                        height: widget.maxPlayerSize + progressIndicatorHeight,
+                        width: maxPlayerSize,
+                        height: maxPlayerSize + progressIndicatorHeight,
                         showControl: false,
-                        controller: widget.controller,
+                        controller: controller,
                       ),
                       Expanded(
                         child: Padding(
@@ -240,7 +197,9 @@ class _MiniDetailedPlayerState extends State<MiniDetailedPlayer> {
                             .add(const VideoPlayerEvent.stopped()),
                       ),
                       ValueListenableBuilder(
-                        valueListenable: videoPlayerController!,
+                        valueListenable: context
+                            .watch<VideoPlayerBloc>()
+                            .videoPlayerController!,
                         builder: (context, value, child) {
                           final isPlaying = value.isPlaying;
 
@@ -277,7 +236,9 @@ class _MiniDetailedPlayerState extends State<MiniDetailedPlayer> {
                   child: Opacity(
                     opacity: elementOpacity,
                     child: ValueListenableBuilder(
-                      valueListenable: videoPlayerController!,
+                      valueListenable: context
+                          .watch<VideoPlayerBloc>()
+                          .videoPlayerController!,
                       builder: (
                         BuildContext context,
                         VideoPlayerValue value,
