@@ -6,4 +6,5 @@ class MiniPlayerEvent with _$MiniPlayerEvent {
     required double min,
     required double max,
   }) = _Initialized;
+  const factory MiniPlayerEvent.expanded() = _Expanded;
 }

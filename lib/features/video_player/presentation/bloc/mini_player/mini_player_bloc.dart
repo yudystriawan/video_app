@@ -17,6 +17,7 @@ class MiniPlayerBloc extends Bloc<MiniPlayerEvent, MiniPlayerState> {
 
   MiniPlayerBloc() : super(MiniPlayerState.initial()) {
     on<_Initialized>(_onInitialized);
+    on<_Expanded>(_onExpanded);
   }
 
   void _onInitialized(
@@ -29,5 +30,12 @@ class MiniPlayerBloc extends Bloc<MiniPlayerEvent, MiniPlayerState> {
       playerMinHeight: event.min,
       playerMaxHeight: event.max,
     ));
+  }
+
+  void _onExpanded(
+    _Expanded event,
+    Emitter<MiniPlayerState> emit,
+  ) async {
+    miniplayerController.animateToHeight(state: PanelState.MAX);
   }
 }
