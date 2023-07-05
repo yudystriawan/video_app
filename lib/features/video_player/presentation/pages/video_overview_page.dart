@@ -14,7 +14,6 @@ class VideoOverviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
       body: BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
         buildWhen: (p, c) => p.currentVideo != c.currentVideo,
         builder: (context, state) {
