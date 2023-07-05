@@ -119,18 +119,27 @@ import 'features/video_player/presentation/bloc/mini_player/mini_player_bloc.dar
 // }
 
 @RoutePage()
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     final height = MediaQuery.of(context).size.height;
 
     context.read<MiniPlayerBloc>().add(MiniPlayerEvent.initialized(
           min: 72,
           max: height,
         ));
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return VideoOverviewPage();
   }
 }
