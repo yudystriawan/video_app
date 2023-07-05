@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 
@@ -17,32 +19,24 @@ class VideoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          width: width,
-          height: height,
-          color: Colors.green,
-          child: controller == null
-              ? const Center(child: CircularProgressIndicator())
-              : ValueListenableBuilder(
-                  valueListenable: controller!.videoPlayerController,
-                  builder: (context, value, child) {
-                    // end duration
-                    if (value.position==value.duration) {
-                      
-                    }
-                    return Stack(
-                      children: [
-                        Chewie(controller: controller!),
-                        if (value.isBuffering)
-                          const Center(child: CircularProgressIndicator())
-                      ],
-                    );
-                  },
-                ),
-        )
-      ],
+    return Container(
+      width: width,
+      height: height,
+      color: Colors.black,
+      child: controller == null
+          ? const Center(child: CircularProgressIndicator())
+          : ValueListenableBuilder(
+              valueListenable: controller!.videoPlayerController,
+              builder: (context, value, child) {
+                return Stack(
+                  children: [
+                    Chewie(controller: controller!),
+                    if (value.isBuffering)
+                      const Center(child: CircularProgressIndicator())
+                  ],
+                );
+              },
+            ),
     );
   }
 }

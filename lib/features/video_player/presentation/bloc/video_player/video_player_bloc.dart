@@ -34,15 +34,22 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
 
     // play new video
     if (videoPlayerController == null || (selectedVideo != currentVideo)) {
+      emit(state.copyWith(
+        currentVideo: null,
+        status: VideoStatus.loading,
+      ));
+
       if (isPlaying) await _resetValue();
 
-      emit(state.copyWith(currentVideo: null));
-
       try {
+        emit(state.copyWith(currentVideo: selectedVideo));
+
         videoPlayerController =
             VideoPlayerController.network(selectedVideo.sources.first);
         await videoPlayerController!.initialize();
         await videoPlayerController!.play();
+
+        emit(state.copyWith(status: VideoStatus.play));
 
         // add listener
         if (videoPlayerController!.hasListeners) {
@@ -50,11 +57,8 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
         }
 
         videoPlayerController!.addListener(setupListener);
-
-        emit(state.copyWith(
-          currentVideo: selectedVideo,
-        ));
       } catch (e) {
+        emit(state.copyWith(currentVideo: null));
         log('error occured', error: e);
       }
       return;

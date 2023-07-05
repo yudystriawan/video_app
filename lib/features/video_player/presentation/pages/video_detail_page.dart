@@ -1,4 +1,3 @@
-
 import 'package:auto_route/auto_route.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +16,15 @@ class VideoDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
-      buildWhen: (p, c) => p.currentVideo != c.currentVideo,
+      buildWhen: (p, c) => p.status != c.status,
       builder: (context, state) {
-        ChewieController chewieController = ChewieController(
-          videoPlayerController:
-              context.watch<VideoPlayerBloc>().videoPlayerController!,
-        );
+        ChewieController? chewieController;
+        if (state.isPlaying) {
+          chewieController = ChewieController(
+            videoPlayerController:
+                context.watch<VideoPlayerBloc>().videoPlayerController!,
+          );
+        }
 
         return BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
           builder: (context, state) {
@@ -48,7 +50,7 @@ class VideoDetailPage extends StatelessWidget {
                 return MiniPlayerWidget(
                   height: height,
                   maxPlayerSize: maxPlayerSize,
-                  controller: chewieController.copyWith(showControls: false),
+                  controller: chewieController?.copyWith(showControls: false),
                 );
               },
             );
