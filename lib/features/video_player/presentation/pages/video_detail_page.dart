@@ -42,6 +42,8 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
         return BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
           builder: (context, state) {
             return Miniplayer(
+              valueNotifier:
+                  context.watch<MiniPlayerBloc>().playerExpandProgress,
               minHeight: state.playerMinHeight,
               maxHeight: state.playerMaxHeight,
               builder: (height, percentage) {
