@@ -8,18 +8,8 @@ import '../widgets/video_list_widget.dart';
 import 'video_detail_page.dart';
 
 @RoutePage()
-class VideoOverviewPage extends StatefulWidget {
+class VideoOverviewPage extends StatelessWidget {
   const VideoOverviewPage({super.key});
-
-  @override
-  State<VideoOverviewPage> createState() => _VideoOverviewPageState();
-}
-
-class _VideoOverviewPageState extends State<VideoOverviewPage> {
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
