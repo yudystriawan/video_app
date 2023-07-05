@@ -15,35 +15,30 @@ class VideoOverviewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey,
-      body: Stack(
-        children: [
-          Column(
+      body: BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
+        buildWhen: (p, c) => p.currentVideo != c.currentVideo,
+        builder: (context, state) {
+          final currentVideo = state.currentVideo;
+          return Stack(
             children: [
-              AppBar(title: const Text('Videos')),
-              const Expanded(child: VideoListWidget()),
-              BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
-                buildWhen: (p, c) => p.currentVideo != c.currentVideo,
-                builder: (context, state) {
-                  if (state.currentVideo == null) return const SizedBox();
-                  return BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
-                    builder: (context, state) {
-                      return SizedBox(
-                        height: state.playerMinHeight,
-                      );
-                    },
-                  );
-                },
-              )
+              Column(
+                children: [
+                  AppBar(title: const Text('Videos')),
+                  const Expanded(child: VideoListWidget()),
+                  if (currentVideo != null)
+                    BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
+                      builder: (context, state) {
+                        return SizedBox(
+                          height: state.playerMinHeight,
+                        );
+                      },
+                    ),
+                ],
+              ),
+              if (currentVideo != null) const VideoDetailPage(),
             ],
-          ),
-          BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
-            buildWhen: (p, c) => p.currentVideo != c.currentVideo,
-            builder: (context, state) {
-              if (state.currentVideo == null) return Container();
-              return const VideoDetailPage();
-            },
-          ),
-        ],
+          );
+        },
       ),
     );
   }
