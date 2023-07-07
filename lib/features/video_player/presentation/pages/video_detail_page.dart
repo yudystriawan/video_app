@@ -41,35 +41,48 @@ class VideoDetailPage extends StatelessWidget {
 
           return BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
             builder: (context, state) {
-              return Miniplayer(
-                valueNotifier:
-                    context.watch<MiniPlayerBloc>().playerExpandProgress,
-                controller:
-                    context.watch<MiniPlayerBloc>().miniplayerController,
-                minHeight: state.playerMinHeight,
-                maxHeight: state.playerMaxHeight,
-                builder: (height, percentage) {
-                  final isMiniplayer =
-                      percentage < miniplayerPercentageDeclaration;
-                  final width = MediaQuery.of(context).size.width;
-                  final maxPlayerSize = width * 0.4;
+              return GestureDetector(
+                onTap: () {
+                  debugPrint('tapped');
+                },
+                child: Miniplayer(
+                  valueNotifier:
+                      context.watch<MiniPlayerBloc>().playerExpandProgress,
+                  controller:
+                      context.watch<MiniPlayerBloc>().miniplayerController,
+                  minHeight: state.playerMinHeight,
+                  maxHeight: state.playerMaxHeight,
+                  builder: (height, percentage) {
+                    final isMiniplayer =
+                        percentage < miniplayerPercentageDeclaration;
+                    final width = MediaQuery.of(context).size.width;
+                    final maxPlayerSize = width * 0.4;
 
-                  if (!isMiniplayer) {
-                    return ExpandedPlayerWidget(
+                    if (!isMiniplayer) {
+                      return GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          // leave empty
+                          // if not, it will minimize the screen on tap
+                        },
+                        child: ExpandedPlayerWidget(
+                          height: height,
+                          maxPlayerSize: maxPlayerSize,
+                          controller:
+                              context.watch<VideoPlayerBloc>().controller,
+                        ),
+                      );
+                    }
+                    return MiniPlayerWidget(
                       height: height,
                       maxPlayerSize: maxPlayerSize,
-                      controller: context.watch<VideoPlayerBloc>().controller,
+                      controller: context
+                          .watch<VideoPlayerBloc>()
+                          .controller
+                          ?.copyWith(showControls: false),
                     );
-                  }
-                  return MiniPlayerWidget(
-                    height: height,
-                    maxPlayerSize: maxPlayerSize,
-                    controller: context
-                        .watch<VideoPlayerBloc>()
-                        .controller
-                        ?.copyWith(showControls: false),
-                  );
-                },
+                  },
+                ),
               );
             },
           );

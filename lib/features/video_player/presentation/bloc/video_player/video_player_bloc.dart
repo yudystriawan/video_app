@@ -6,6 +6,7 @@ import 'package:bloc/bloc.dart';
 import 'package:chewie/chewie.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:video_app/features/video_player/data/model/video.dart';
+import 'package:video_app/features/video_player/presentation/widgets/video_controls.dart';
 import 'package:video_player/video_player.dart';
 
 part 'video_player_bloc.freezed.dart';
@@ -13,6 +14,7 @@ part 'video_player_event.dart';
 part 'video_player_state.dart';
 
 class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
+  VideoPlayerController? _videoPlayerController;
   ChewieController? controller;
 
   Duration pauseTime = Duration.zero;
@@ -43,12 +45,14 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
       try {
         emit(state.copyWith(currentVideo: selectedVideo));
 
-        final videoPlayerController =
+        _videoPlayerController =
             VideoPlayerController.network(selectedVideo.sources.first);
-        await videoPlayerController.initialize();
-        await videoPlayerController.play();
-        controller =
-            ChewieController(videoPlayerController: videoPlayerController);
+        await _videoPlayerController!.initialize();
+        await _videoPlayerController!.play();
+        controller = ChewieController(
+          videoPlayerController: _videoPlayerController!,
+          customControls: const VideoControls(),
+        );
 
         emit(state.copyWith(status: VideoStatus.play));
 
@@ -89,6 +93,7 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
 
   Future<void> _resetValue() async {
     await controller?.pause();
+    await _videoPlayerController?.dispose();
     controller?.dispose();
 
     controller = null;
@@ -122,9 +127,9 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
   }
 
   @override
-  Future<void> close() {
+  Future<void> close() async {
     controller?.removeListener(setupListener);
-    controller?.dispose();
+
     _resetValue();
     return super.close();
   }
