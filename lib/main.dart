@@ -41,7 +41,6 @@ class _MyAppState extends State<MyApp> {
         title: 'Video App Demo',
         theme: ThemeData(
           primarySwatch: Colors.blue,
-          backgroundColor: Colors.white,
         ),
       ),
     );

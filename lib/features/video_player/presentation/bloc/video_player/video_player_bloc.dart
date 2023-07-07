@@ -3,6 +3,7 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:chewie/chewie.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:video_app/features/video_player/data/model/video.dart';
 import 'package:video_player/video_player.dart';
@@ -12,7 +13,8 @@ part 'video_player_event.dart';
 part 'video_player_state.dart';
 
 class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
-  VideoPlayerController? videoPlayerController;
+  ChewieController? controller;
+
   Duration pauseTime = Duration.zero;
   bool _isPLaying = false;
 
@@ -30,31 +32,34 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     // check if selected video different from current video
     final selectedVideo = event.video!;
     final currentVideo = state.currentVideo;
-    final isPlaying = videoPlayerController?.value.isPlaying ?? false;
+    final isPlaying = controller?.isPlaying ?? false;
 
     // play new video
-    if (videoPlayerController == null || (selectedVideo != currentVideo)) {
+    if (controller == null || (selectedVideo != currentVideo)) {
+      emit(state.copyWith(status: VideoStatus.loading));
+
       if (isPlaying) await _resetValue();
 
-      emit(state.copyWith(currentVideo: null));
-
       try {
-        videoPlayerController =
+        emit(state.copyWith(currentVideo: selectedVideo));
+
+        final videoPlayerController =
             VideoPlayerController.network(selectedVideo.sources.first);
-        await videoPlayerController!.initialize();
-        await videoPlayerController!.play();
+        await videoPlayerController.initialize();
+        await videoPlayerController.play();
+        controller =
+            ChewieController(videoPlayerController: videoPlayerController);
+
+        emit(state.copyWith(status: VideoStatus.play));
 
         // add listener
-        if (videoPlayerController!.hasListeners) {
-          videoPlayerController!.removeListener(setupListener);
+        if (controller!.hasListeners) {
+          controller!.removeListener(setupListener);
         }
 
-        videoPlayerController!.addListener(setupListener);
-
-        emit(state.copyWith(
-          currentVideo: selectedVideo,
-        ));
+        controller!.addListener(setupListener);
       } catch (e) {
+        emit(state.copyWith(currentVideo: null));
         log('error occured', error: e);
       }
       return;
@@ -73,7 +78,7 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     _Stopped event,
     Emitter<VideoPlayerState> emit,
   ) async {
-    if (videoPlayerController != null) {
+    if (controller != null) {
       await _resetValue();
 
       emit(state.copyWith(
@@ -83,10 +88,10 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
   }
 
   Future<void> _resetValue() async {
-    await videoPlayerController?.pause();
-    await videoPlayerController?.dispose();
+    await controller?.pause();
+    controller?.dispose();
 
-    videoPlayerController = null;
+    controller = null;
     pauseTime = Duration.zero;
   }
 
@@ -94,10 +99,10 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     _Paused event,
     Emitter<VideoPlayerState> emit,
   ) async {
-    if (videoPlayerController != null) {
-      if (!videoPlayerController!.value.isPlaying) return;
-      await videoPlayerController!.pause();
-      pauseTime = videoPlayerController!.value.position;
+    if (controller != null) {
+      if (!controller!.isPlaying) return;
+      await controller?.pause();
+      pauseTime = controller!.videoPlayerController.value.position;
     }
   }
 
@@ -109,27 +114,32 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
   }
 
   Future<void> _resumeVideo() async {
-    await videoPlayerController!.seekTo(pauseTime);
-    pauseTime = Duration.zero;
-    await videoPlayerController!.play();
+    if (controller != null) {
+      await controller!.seekTo(pauseTime);
+      pauseTime = Duration.zero;
+      await controller!.play();
+    }
   }
 
   @override
   Future<void> close() {
-    videoPlayerController?.removeListener(setupListener);
-    videoPlayerController?.dispose();
+    controller?.removeListener(setupListener);
+    controller?.dispose();
     _resetValue();
     return super.close();
   }
 
   void setupListener() {
-    var isPlaying = videoPlayerController?.value.isPlaying ?? false;
-    if (_isPLaying != isPlaying) {
-      _isPLaying = isPlaying;
+    log('isPlaying...');
+    if (controller != null) {
+      var isPlaying = controller!.isPlaying;
+      if (_isPLaying != isPlaying) {
+        _isPLaying = isPlaying;
 
-      // when stop or pause capture current player position
-      if (!_isPLaying) {
-        pauseTime = videoPlayerController?.value.position ?? Duration.zero;
+        // when stop or pause capture current player position
+        if (!_isPLaying) {
+          pauseTime = controller!.videoPlayerController.value.position;
+        }
       }
     }
   }
