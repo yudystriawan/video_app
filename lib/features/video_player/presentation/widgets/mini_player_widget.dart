@@ -22,6 +22,9 @@ class MiniPlayerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final videoPlayerController =
+        context.watch<VideoPlayerBloc>().controller?.videoPlayerController;
+
     return BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
       builder: (context, state) {
         final playerMinHeight = state.playerMinHeight;
@@ -76,38 +79,37 @@ class MiniPlayerWidget extends StatelessWidget {
                             .read<VideoPlayerBloc>()
                             .add(const VideoPlayerEvent.stopped()),
                       ),
-                      ValueListenableBuilder(
-                        valueListenable: context
-                            .watch<VideoPlayerBloc>()
-                            .videoPlayerController!,
-                        builder: (context, value, child) {
-                          final isPlaying = value.isPlaying;
+                      if (videoPlayerController != null)
+                        ValueListenableBuilder(
+                          valueListenable: videoPlayerController,
+                          builder: (context, value, child) {
+                            final isPlaying = value.isPlaying;
 
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 3),
-                            child: Opacity(
-                              opacity: elementOpacity,
-                              child: IconButton(
-                                icon: Icon(isPlaying
-                                    ? Icons.pause_circle_filled
-                                    : Icons.play_circle_filled),
-                                onPressed: () {
-                                  if (isPlaying) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 3),
+                              child: Opacity(
+                                opacity: elementOpacity,
+                                child: IconButton(
+                                  icon: Icon(isPlaying
+                                      ? Icons.pause_circle_filled
+                                      : Icons.play_circle_filled),
+                                  onPressed: () {
+                                    if (isPlaying) {
+                                      context
+                                          .read<VideoPlayerBloc>()
+                                          .add(const VideoPlayerEvent.paused());
+                                      return;
+                                    }
+
                                     context
                                         .read<VideoPlayerBloc>()
-                                        .add(const VideoPlayerEvent.paused());
-                                    return;
-                                  }
-
-                                  context
-                                      .read<VideoPlayerBloc>()
-                                      .add(const VideoPlayerEvent.resumed());
-                                },
+                                        .add(const VideoPlayerEvent.resumed());
+                                  },
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
+                            );
+                          },
+                        ),
                     ],
                   ),
                 ),
@@ -115,22 +117,25 @@ class MiniPlayerWidget extends StatelessWidget {
                   height: progressIndicatorHeight,
                   child: Opacity(
                     opacity: elementOpacity,
-                    child: ValueListenableBuilder(
-                      valueListenable: context
-                          .watch<VideoPlayerBloc>()
-                          .videoPlayerController!,
-                      builder: (BuildContext context, VideoPlayerValue value,
-                          Widget? child) {
-                        final durationLinear = percentageFromDuration(
-                          value.position,
-                          Duration.zero,
-                          value.duration,
-                        );
-                        return LinearProgressIndicator(
-                          value: durationLinear,
-                        );
-                      },
-                    ),
+                    child: videoPlayerController != null
+                        ? ValueListenableBuilder(
+                            valueListenable: context
+                                .watch<VideoPlayerBloc>()
+                                .controller!
+                                .videoPlayerController,
+                            builder: (BuildContext context,
+                                VideoPlayerValue value, Widget? child) {
+                              final durationLinear = percentageFromDuration(
+                                value.position,
+                                Duration.zero,
+                                value.duration,
+                              );
+                              return LinearProgressIndicator(
+                                value: durationLinear,
+                              );
+                            },
+                          )
+                        : const LinearProgressIndicator(value: 0),
                   ),
                 ),
               ],

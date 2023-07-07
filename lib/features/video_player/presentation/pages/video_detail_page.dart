@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
@@ -15,48 +17,64 @@ class VideoDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
-      buildWhen: (p, c) => p.status != c.status,
-      builder: (context, state) {
-        ChewieController? chewieController;
-        if (state.isPlaying) {
-          chewieController = ChewieController(
-            videoPlayerController:
-                context.watch<VideoPlayerBloc>().videoPlayerController!,
-          );
+    return BlocListener<VideoPlayerBloc, VideoPlayerState>(
+      listenWhen: (p, c) => p.status != c.status,
+      listener: (context, state) {
+        if (state.isLoading) {
+          log('loading...');
         }
+      },
+      child: BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
+        buildWhen: (p, c) => p.status != c.status,
+        builder: (context, state) {
+          // ChewieController? chewieController;
 
-        return BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
-          builder: (context, state) {
-            return Miniplayer(
-              valueNotifier:
-                  context.watch<MiniPlayerBloc>().playerExpandProgress,
-              controller: context.watch<MiniPlayerBloc>().miniplayerController,
-              minHeight: state.playerMinHeight,
-              maxHeight: state.playerMaxHeight,
-              builder: (height, percentage) {
-                final isMiniplayer =
-                    percentage < miniplayerPercentageDeclaration;
-                final width = MediaQuery.of(context).size.width;
-                final maxPlayerSize = width * 0.4;
+          // if (state.isLoading) {
+          //   context
+          //       .read<MiniPlayerBloc>()
+          //       .add(const MiniPlayerEvent.expanded());
+          // }
 
-                if (!isMiniplayer) {
-                  return ExpandedPlayerWidget(
+          // if (state.isPlaying) {
+          //   chewieController = context.watch<VideoPlayerBloc>().oontroller!;
+          // }
+
+          return BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
+            builder: (context, state) {
+              return Miniplayer(
+                valueNotifier:
+                    context.watch<MiniPlayerBloc>().playerExpandProgress,
+                controller:
+                    context.watch<MiniPlayerBloc>().miniplayerController,
+                minHeight: state.playerMinHeight,
+                maxHeight: state.playerMaxHeight,
+                builder: (height, percentage) {
+                  final isMiniplayer =
+                      percentage < miniplayerPercentageDeclaration;
+                  final width = MediaQuery.of(context).size.width;
+                  final maxPlayerSize = width * 0.4;
+
+                  if (!isMiniplayer) {
+                    return ExpandedPlayerWidget(
+                      height: height,
+                      maxPlayerSize: maxPlayerSize,
+                      controller: context.watch<VideoPlayerBloc>().controller,
+                    );
+                  }
+                  return MiniPlayerWidget(
                     height: height,
                     maxPlayerSize: maxPlayerSize,
-                    controller: chewieController,
+                    controller: context
+                        .watch<VideoPlayerBloc>()
+                        .controller
+                        ?.copyWith(showControls: false),
                   );
-                }
-                return MiniPlayerWidget(
-                  height: height,
-                  maxPlayerSize: maxPlayerSize,
-                  controller: chewieController?.copyWith(showControls: false),
-                );
-              },
-            );
-          },
-        );
-      },
+                },
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
