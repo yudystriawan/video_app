@@ -24,67 +24,50 @@ class VideoDetailPage extends StatelessWidget {
           log('loading...');
         }
       },
-      child: BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
-        buildWhen: (p, c) => p.status != c.status,
+      child: BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
         builder: (context, state) {
-          // ChewieController? chewieController;
+          return GestureDetector(
+            onTap: () {
+              debugPrint('tapped');
+            },
+            child: Miniplayer(
+              valueNotifier:
+                  context.watch<MiniPlayerBloc>().playerExpandProgress,
+              controller:
+                  context.watch<MiniPlayerBloc>().miniplayerController,
+              minHeight: state.playerMinHeight,
+              maxHeight: state.playerMaxHeight,
+              builder: (height, percentage) {
+                final isMiniplayer =
+                    percentage < miniplayerPercentageDeclaration;
+                final width = MediaQuery.of(context).size.width;
+                final maxPlayerSize = width * 0.4;
 
-          // if (state.isLoading) {
-          //   context
-          //       .read<MiniPlayerBloc>()
-          //       .add(const MiniPlayerEvent.expanded());
-          // }
-
-          // if (state.isPlaying) {
-          //   chewieController = context.watch<VideoPlayerBloc>().oontroller!;
-          // }
-
-          return BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
-            builder: (context, state) {
-              return GestureDetector(
-                onTap: () {
-                  debugPrint('tapped');
-                },
-                child: Miniplayer(
-                  valueNotifier:
-                      context.watch<MiniPlayerBloc>().playerExpandProgress,
-                  controller:
-                      context.watch<MiniPlayerBloc>().miniplayerController,
-                  minHeight: state.playerMinHeight,
-                  maxHeight: state.playerMaxHeight,
-                  builder: (height, percentage) {
-                    final isMiniplayer =
-                        percentage < miniplayerPercentageDeclaration;
-                    final width = MediaQuery.of(context).size.width;
-                    final maxPlayerSize = width * 0.4;
-
-                    if (!isMiniplayer) {
-                      return GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () {
-                          // leave empty
-                          // if not, it will minimize the screen on tap
-                        },
-                        child: ExpandedPlayerWidget(
-                          height: height,
-                          maxPlayerSize: maxPlayerSize,
-                          controller:
-                              context.watch<VideoPlayerBloc>().controller,
-                        ),
-                      );
-                    }
-                    return MiniPlayerWidget(
+                if (!isMiniplayer) {
+                  return GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      // leave empty
+                      // if not, it will minimize the screen on tap
+                    },
+                    child: ExpandedPlayerWidget(
                       height: height,
                       maxPlayerSize: maxPlayerSize,
-                      controller: context
-                          .watch<VideoPlayerBloc>()
-                          .controller
-                          ?.copyWith(showControls: false),
-                    );
-                  },
-                ),
-              );
-            },
+                      controller:
+                          context.watch<VideoPlayerBloc>().controller,
+                    ),
+                  );
+                }
+                return MiniPlayerWidget(
+                  height: height,
+                  maxPlayerSize: maxPlayerSize,
+                  controller: context
+                      .watch<VideoPlayerBloc>()
+                      .controller
+                      ?.copyWith(showControls: false),
+                );
+              },
+            ),
           );
         },
       ),
