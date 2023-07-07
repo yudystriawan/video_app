@@ -8,7 +8,7 @@ import 'package:miniplayer/miniplayer.dart';
 
 import '../bloc/mini_player/mini_player_bloc.dart';
 import '../bloc/video_player/video_player_bloc.dart';
-import '../widgets/expnaded_player_widget.dart';
+import '../widgets/expanded_player_widget.dart';
 import '../widgets/mini_player_widget.dart';
 
 @RoutePage()
