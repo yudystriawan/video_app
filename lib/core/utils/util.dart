@@ -23,7 +23,7 @@ double percentageFromDuration(
 }
 
 extension DurationX on Duration {
-  // convert to hh:mm:ss
+  /// convert to hh:mm:ss
   String formatDuration() {
     String hours = (inHours % 24).toString().padLeft(2, '0');
     String minutes = (inMinutes % 60).toString().padLeft(2, '0');
