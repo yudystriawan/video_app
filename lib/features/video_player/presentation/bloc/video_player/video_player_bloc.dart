@@ -25,7 +25,48 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     on<_Stopped>(_onStopped);
     on<_Paused>(_onPaused);
     on<_Resumed>(_onResumed);
-    on<_Replay>(_onReplay);
+    on<_Replayed>(_onReplayed);
+    on<_Sought>(_onSought);
+  }
+
+  @override
+  Future<void> close() async {
+    controller?.removeListener(setupListener);
+
+    _resetValue();
+    return super.close();
+  }
+
+  Future<void> _resetValue() async {
+    await controller?.pause();
+    await _videoPlayerController?.dispose();
+    controller?.dispose();
+
+    controller = null;
+    pauseTime = Duration.zero;
+  }
+
+  Future<void> _resumeVideo() async {
+    if (controller != null) {
+      await controller!.seekTo(pauseTime);
+      pauseTime = Duration.zero;
+      await controller!.play();
+    }
+  }
+
+  void setupListener() {
+    log('isPlaying...');
+    if (controller != null) {
+      var isPlaying = controller!.isPlaying;
+      if (_isPLaying != isPlaying) {
+        _isPLaying = isPlaying;
+
+        // when stop or pause capture current player position
+        if (!_isPLaying) {
+          pauseTime = controller!.videoPlayerController.value.position;
+        }
+      }
+    }
   }
 
   void _onPlayed(
@@ -79,8 +120,8 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     }
   }
 
-  void _onReplay(
-    _Replay event,
+  void _onReplayed(
+    _Replayed event,
     Emitter<VideoPlayerState> emit,
   ) async {
     if (controller != null) {
@@ -103,15 +144,6 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     }
   }
 
-  Future<void> _resetValue() async {
-    await controller?.pause();
-    await _videoPlayerController?.dispose();
-    controller?.dispose();
-
-    controller = null;
-    pauseTime = Duration.zero;
-  }
-
   void _onPaused(
     _Paused event,
     Emitter<VideoPlayerState> emit,
@@ -130,34 +162,13 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     await _resumeVideo();
   }
 
-  Future<void> _resumeVideo() async {
-    if (controller != null) {
-      await controller!.seekTo(pauseTime);
-      pauseTime = Duration.zero;
-      await controller!.play();
-    }
-  }
-
-  @override
-  Future<void> close() async {
-    controller?.removeListener(setupListener);
-
-    _resetValue();
-    return super.close();
-  }
-
-  void setupListener() {
-    log('isPlaying...');
-    if (controller != null) {
-      var isPlaying = controller!.isPlaying;
-      if (_isPLaying != isPlaying) {
-        _isPLaying = isPlaying;
-
-        // when stop or pause capture current player position
-        if (!_isPLaying) {
-          pauseTime = controller!.videoPlayerController.value.position;
-        }
-      }
+  void _onSought(
+    _Sought event,
+    Emitter<VideoPlayerState> emit,
+  ) async {
+    if(controller!=null){
+      final newPosition = event.position;
+      controller!.seekTo(newPosition);
     }
   }
 }
