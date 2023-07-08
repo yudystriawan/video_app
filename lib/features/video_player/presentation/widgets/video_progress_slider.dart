@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 import '../bloc/video_player/video_player_bloc.dart';
 
-class VideoProgressSlider extends StatelessWidget {
+class VideoProgressSlider extends HookWidget {
   const VideoProgressSlider({
     Key? key,
     this.showControll = true,
@@ -13,6 +16,10 @@ class VideoProgressSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isChanging = useState(false);
+    final tempCurrentPosition = useState(0.0);
+    final showThumbControll = useState(showControll);
+
     return ValueListenableBuilder(
       valueListenable:
           context.watch<VideoPlayerBloc>().controller!.videoPlayerController,
@@ -22,18 +29,44 @@ class VideoProgressSlider extends StatelessWidget {
             trackShape: CustomTrackShape(),
             overlayShape: const RoundSliderOverlayShape(overlayRadius: 10.0),
             thumbShape: CustomThumbShape(
-              thumbRadius: showControll ? 8 : 0,
+              thumbRadius: showThumbControll.value || showControll ? 8 : 0,
               thumbHeight: 0,
               color: Theme.of(context).primaryColor,
             ),
             inactiveTrackColor: Colors.grey,
           ),
           child: Slider(
-            value: value.position.inSeconds.toDouble(),
+            value: isChanging.value
+                ? tempCurrentPosition.value
+                : value.position.inSeconds.toDouble(),
             min: 0,
             max: value.duration.inSeconds.toDouble(),
             onChanged: (value) {
-              debugPrint('progressChanged: $value');
+              tempCurrentPosition.value = value;
+            },
+            onChangeStart: (value) {
+              isChanging.value = true;
+              showThumbControll.value = true;
+            },
+            onChangeEnd: (value) {
+              // if isChanging is true
+              // assign tempValue to new video player
+              if (isChanging.value) {
+                final position =
+                    Duration(seconds: tempCurrentPosition.value.toInt());
+
+                context
+                    .read<VideoPlayerBloc>()
+                    .add(VideoPlayerEvent.sought(position));
+
+                isChanging.value = false;
+                tempCurrentPosition.value = 0;
+
+                // add delay 3 second to remove thumb controll
+                Timer(const Duration(seconds: 3), () {
+                  showThumbControll.value = false;
+                });
+              }
             },
           ),
         );
