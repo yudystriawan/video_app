@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:video_app/core/widgets/round_container.dart';
 
 import '../bloc/video_player/video_player_bloc.dart';
 
@@ -15,9 +16,10 @@ class VideoControls extends StatefulWidget {
 
 class _VideoControlsState extends State<VideoControls> {
   ChewieController? _controller;
-  bool _isVisible = true;
+  bool _isVisible = false;
   Timer? _visibleTimer;
   int _counter = 0;
+  final double _iconSize = 24;
 
   @override
   void initState() {
@@ -81,26 +83,51 @@ class _VideoControlsState extends State<VideoControls> {
                     valueListenable: _controller!.videoPlayerController,
                     builder: (context, value, child) {
                       final isPlaying = value.isPlaying;
-                      return Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                                isPlaying ? Icons.pause : Icons.play_arrow),
-                            onPressed: () {
-                              if (isPlaying) {
+                      final isFinished = value.isFinished;
+                      return SizedBox(
+                        width: MediaQuery.of(context).size.width / 2,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            RoundContainer(
+                              onTap: () {},
+                              child: Icon(
+                                Icons.skip_previous_sharp,
+                                size: _iconSize,
+                              ),
+                            ),
+                            RoundContainer(
+                              child: Icon(
+                                isFinished
+                                    ? Icons.replay
+                                    : isPlaying
+                                        ? Icons.pause
+                                        : Icons.play_arrow,
+                                size: _iconSize + (_iconSize * .3),
+                              ),
+                              onTap: () {
+                                if (isPlaying) {
+                                  context
+                                      .read<VideoPlayerBloc>()
+                                      .add(const VideoPlayerEvent.paused());
+                                  return;
+                                }
+
                                 context
                                     .read<VideoPlayerBloc>()
-                                    .add(const VideoPlayerEvent.paused());
-                                return;
-                              }
-
-                              context
-                                  .read<VideoPlayerBloc>()
-                                  .add(const VideoPlayerEvent.resumed());
-                            },
-                          ),
-                        ],
+                                    .add(const VideoPlayerEvent.resumed());
+                              },
+                            ),
+                            RoundContainer(
+                              onTap: () {},
+                              child: Icon(
+                                Icons.skip_next_sharp,
+                                size: _iconSize,
+                              ),
+                            ),
+                          ],
+                        ),
                       );
                     },
                   )
