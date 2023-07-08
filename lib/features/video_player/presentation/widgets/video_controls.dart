@@ -4,6 +4,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_app/core/widgets/round_container.dart';
+import 'package:video_app/features/video_player/presentation/widgets/video_duration_widget.dart';
 import 'package:video_app/features/video_player/presentation/widgets/video_progress_slider.dart';
 
 import '../bloc/video_player/video_player_bloc.dart';
@@ -139,13 +140,24 @@ class _VideoControlsState extends State<VideoControls> {
               ),
             ),
           ),
-          const Positioned(
-            bottom: 20,
-            left: 10,
-            child: Text(
-              '00:00/00:00',
-              style: TextStyle(
-                color: Colors.white,
+          Visibility(
+            visible: _isVisible,
+            child: Positioned(
+              bottom: 10,
+              left: 16,
+              right: 16,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const VideoDurationWidget(),
+                  GestureDetector(
+                    onTap: () {},
+                    child: const Icon(
+                      Icons.fullscreen,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
