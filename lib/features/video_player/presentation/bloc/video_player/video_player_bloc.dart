@@ -149,3 +149,7 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     }
   }
 }
+
+extension VideoPlayerValueX on VideoPlayerValue {
+  bool get isFinished => position.inSeconds == duration.inSeconds;
+}
