@@ -6,4 +6,5 @@ class VideoPlayerEvent with _$VideoPlayerEvent {
   const factory VideoPlayerEvent.stopped() = _Stopped;
   const factory VideoPlayerEvent.paused() = _Paused;
   const factory VideoPlayerEvent.resumed() = _Resumed;
+  const factory VideoPlayerEvent.replay() = _Replay;
 }

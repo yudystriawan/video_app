@@ -84,6 +84,7 @@ class _VideoControlsState extends State<VideoControls> {
                     builder: (context, value, child) {
                       final isPlaying = value.isPlaying;
                       final isFinished = value.isFinished;
+
                       return SizedBox(
                         width: MediaQuery.of(context).size.width / 2,
                         child: Row(

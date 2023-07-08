@@ -25,6 +25,7 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     on<_Stopped>(_onStopped);
     on<_Paused>(_onPaused);
     on<_Resumed>(_onResumed);
+    on<_Replay>(_onReplay);
   }
 
   void _onPlayed(
@@ -75,6 +76,17 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
       emit(state.copyWith(
         currentVideo: selectedVideo,
       ));
+    }
+  }
+
+  void _onReplay(
+    _Replay event,
+    Emitter<VideoPlayerState> emit,
+  ) async {
+    if (controller != null) {
+      pauseTime = Duration.zero;
+      controller!.seekTo(pauseTime);
+      await controller!.play();
     }
   }
 
