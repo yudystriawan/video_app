@@ -27,6 +27,8 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     on<_Resumed>(_onResumed);
     on<_Replayed>(_onReplayed);
     on<_Sought>(_onSought);
+    on<_SkippedForward>(_onSkippedForward);
+    on<_SkippedBackward>(_onSkippedBackward);
   }
 
   @override
@@ -166,9 +168,33 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     _Sought event,
     Emitter<VideoPlayerState> emit,
   ) async {
-    if(controller!=null){
+    if (controller != null) {
       final newPosition = event.position;
       controller!.seekTo(newPosition);
+    }
+  }
+
+  void _onSkippedForward(
+    _SkippedForward event,
+    Emitter<VideoPlayerState> emit,
+  ) async {
+    if (controller != null) {
+      const skipValue = 5;
+      final currentPosition =
+          controller!.videoPlayerController.value.position.inSeconds;
+      controller!.seekTo(Duration(seconds: currentPosition + skipValue));
+    }
+  }
+
+  void _onSkippedBackward(
+    _SkippedBackward event,
+    Emitter<VideoPlayerState> emit,
+  ) async {
+    if (controller != null) {
+      const skipValue = 5;
+      final currentPosition =
+          controller!.videoPlayerController.value.position.inSeconds;
+      controller!.seekTo(Duration(seconds: currentPosition - skipValue));
     }
   }
 }
