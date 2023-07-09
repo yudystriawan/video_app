@@ -40,16 +40,15 @@ class VideoSeekControllWidget extends HookWidget {
               opacity: showRewindEffect.value ? 1 : 0,
               child: Container(
                 height: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
                     topRight: Radius.circular(100),
                     bottomRight: Radius.circular(100),
                   ),
-                  color: Colors.grey.withOpacity(0.5),
+                  color: Colors.white38,
                 ),
                 child: const Icon(
                   Icons.fast_rewind,
-                  color: Colors.white,
                 ),
               ),
             ),
@@ -74,16 +73,16 @@ class VideoSeekControllWidget extends HookWidget {
               opacity: showForwardEffect.value ? 1 : 0,
               child: Container(
                 height: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(100),
                     bottomLeft: Radius.circular(100),
                   ),
-                  color: Colors.grey.withOpacity(0.5),
+                  color: Colors.white38,
                 ),
                 child: const Icon(
                   Icons.fast_forward,
-                  color: Colors.white,
+                  
                 ),
               ),
             ),
