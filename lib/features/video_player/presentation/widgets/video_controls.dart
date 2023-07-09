@@ -71,103 +71,95 @@ class _VideoControlsState extends State<VideoControls> {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      fit: StackFit.expand,
       children: [
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            _toggleVisibility();
-          },
+        VideoSeekControllWidget(
+          onTapCallback: () => _toggleVisibility(),
+        ),
+        Visibility(
+          visible: _isVisible,
           child: Stack(
             children: [
               SizedBox(
                 height: double.infinity,
                 width: double.infinity,
-                child: Visibility(
-                  visible: _isVisible,
-                  child: Center(
-                    child: _controller != null
-                        ? ValueListenableBuilder(
-                            valueListenable: _controller!.videoPlayerController,
-                            builder: (context, value, child) {
-                              final isPlaying = value.isPlaying;
-                              final isFinished = value.isFinished;
+                child: Center(
+                  child: _controller != null
+                      ? ValueListenableBuilder(
+                          valueListenable: _controller!.videoPlayerController,
+                          builder: (context, value, child) {
+                            final isPlaying = value.isPlaying;
+                            final isFinished = value.isFinished;
 
-                              return SizedBox(
-                                width: MediaQuery.of(context).size.width / 2,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    RoundContainer(
-                                      onTap: () {},
-                                      child: Icon(
-                                        Icons.skip_previous_sharp,
-                                        size: _iconSize,
-                                      ),
+                            return SizedBox(
+                              width: MediaQuery.of(context).size.width / 2,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  RoundContainer(
+                                    onTap: () {},
+                                    child: Icon(
+                                      Icons.skip_previous_sharp,
+                                      size: _iconSize,
                                     ),
-                                    RoundContainer(
-                                      child: Icon(
-                                        isFinished
-                                            ? Icons.replay
-                                            : isPlaying
-                                                ? Icons.pause
-                                                : Icons.play_arrow,
-                                        size: _iconSize + (_iconSize * .3),
-                                      ),
-                                      onTap: () {
-                                        if (isPlaying) {
-                                          context.read<VideoPlayerBloc>().add(
-                                              const VideoPlayerEvent.paused());
-                                          return;
-                                        }
-
+                                  ),
+                                  RoundContainer(
+                                    child: Icon(
+                                      isFinished
+                                          ? Icons.replay
+                                          : isPlaying
+                                              ? Icons.pause
+                                              : Icons.play_arrow,
+                                      size: _iconSize + (_iconSize * .3),
+                                    ),
+                                    onTap: () {
+                                      if (isPlaying) {
                                         context.read<VideoPlayerBloc>().add(
-                                            const VideoPlayerEvent.resumed());
-                                      },
+                                            const VideoPlayerEvent.paused());
+                                        return;
+                                      }
+
+                                      context.read<VideoPlayerBloc>().add(
+                                          const VideoPlayerEvent.resumed());
+                                    },
+                                  ),
+                                  RoundContainer(
+                                    onTap: () {},
+                                    child: Icon(
+                                      Icons.skip_next_sharp,
+                                      size: _iconSize,
                                     ),
-                                    RoundContainer(
-                                      onTap: () {},
-                                      child: Icon(
-                                        Icons.skip_next_sharp,
-                                        size: _iconSize,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          )
-                        : const CircularProgressIndicator(),
-                  ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        )
+                      : const CircularProgressIndicator(),
                 ),
               ),
-              Visibility(
-                visible: _isVisible,
-                child: Positioned(
-                  bottom: 10,
-                  left: 16,
-                  right: 16,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const VideoDurationWidget(),
-                      GestureDetector(
-                        onTap: () {},
-                        child: const Icon(
-                          Icons.fullscreen,
-                          color: Colors.white,
-                        ),
+              Positioned(
+                bottom: 10,
+                left: 16,
+                right: 16,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const VideoDurationWidget(),
+                    GestureDetector(
+                      onTap: () {},
+                      child: const Icon(
+                        Icons.fullscreen,
+                        color: Colors.white,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-        ),
-        VideoSeekControllWidget(
-          onTapCallback: () => _toggleVisibility(),
         ),
         Positioned(
           bottom: 0,
