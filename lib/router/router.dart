@@ -1,4 +1,6 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import 'package:miniplayer/miniplayer.dart';
 
 import '../features/video_player/presentation/pages/video_overview_page.dart';
 import '../features/video_player/presentation/pages/video_detail_page.dart';

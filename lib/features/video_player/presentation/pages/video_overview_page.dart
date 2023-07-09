@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:miniplayer/miniplayer.dart';
 
 import '../bloc/mini_player/mini_player_bloc.dart';
 import '../bloc/video_player/video_player_bloc.dart';
@@ -14,13 +15,13 @@ class VideoOverviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
-        buildWhen: (p, c) => p.currentVideo != c.currentVideo,
-        builder: (context, state) {
-          final currentVideo = state.currentVideo;
-          return Stack(
-            children: [
-              Column(
+      body: Stack(
+        children: [
+          BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
+            buildWhen: (p, c) => p.currentVideo != c.currentVideo,
+            builder: (context, state) {
+              final currentVideo = state.currentVideo;
+              return Column(
                 children: [
                   AppBar(title: const Text('Videos')),
                   const Expanded(child: VideoListWidget()),
@@ -33,11 +34,14 @@ class VideoOverviewPage extends StatelessWidget {
                       },
                     ),
                 ],
-              ),
-              if (currentVideo != null) const VideoDetailPage(),
-            ],
-          );
-        },
+              );
+            },
+          ),
+          VideoDetailPage(
+            miniplayerController:
+                context.watch<MiniPlayerBloc>().miniplayerController,
+          ),
+        ],
       ),
     );
   }

@@ -13,64 +13,62 @@ import '../widgets/mini_player_widget.dart';
 
 @RoutePage()
 class VideoDetailPage extends StatelessWidget {
-  const VideoDetailPage({super.key});
+  const VideoDetailPage({
+    super.key,
+    required this.miniplayerController,
+  });
+
+  final MiniplayerController miniplayerController;
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<VideoPlayerBloc, VideoPlayerState>(
-      listenWhen: (p, c) => p.status != c.status,
-      listener: (context, state) {
-        if (state.isLoading) {
-          log('loading...');
-        }
-      },
-      child: BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
-        builder: (context, state) {
-          return GestureDetector(
-            onTap: () {
-              debugPrint('tapped');
-            },
-            child: Miniplayer(
-              valueNotifier:
-                  context.watch<MiniPlayerBloc>().playerExpandProgress,
-              controller:
-                  context.watch<MiniPlayerBloc>().miniplayerController,
-              minHeight: state.playerMinHeight,
-              maxHeight: state.playerMaxHeight,
-              builder: (height, percentage) {
-                final isMiniplayer =
-                    percentage < miniplayerPercentageDeclaration;
-                final width = MediaQuery.of(context).size.width;
-                final maxPlayerSize = width * 0.4;
+    return BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
+      buildWhen: (p, c) => p.currentVideo != c.currentVideo,
+      builder: (context, state) {
+        return Offstage(
+          offstage: state.currentVideo == null,
+          child: BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
+            builder: (context, state) {
+              return Miniplayer(
+                valueNotifier:
+                    context.watch<MiniPlayerBloc>().playerExpandProgress,
+                controller: miniplayerController,
+                minHeight: state.playerMinHeight,
+                maxHeight: state.playerMaxHeight,
+                builder: (height, percentage) {
+                  final isMiniplayer =
+                      percentage < miniplayerPercentageDeclaration;
+                  final width = MediaQuery.of(context).size.width;
+                  final maxPlayerSize = width * 0.4;
 
-                if (!isMiniplayer) {
-                  return GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      // leave empty
-                      // if not, it will minimize the screen on tap
-                    },
-                    child: ExpandedPlayerWidget(
-                      height: height,
-                      maxPlayerSize: maxPlayerSize,
-                      controller:
-                          context.watch<VideoPlayerBloc>().controller,
-                    ),
+                  if (!isMiniplayer) {
+                    return GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        // leave empty
+                        // if not, it will minimize the screen on tap
+                      },
+                      child: ExpandedPlayerWidget(
+                        height: height,
+                        maxPlayerSize: maxPlayerSize,
+                        controller: context.watch<VideoPlayerBloc>().controller,
+                      ),
+                    );
+                  }
+                  return MiniPlayerWidget(
+                    height: height,
+                    maxPlayerSize: maxPlayerSize,
+                    controller: context
+                        .watch<VideoPlayerBloc>()
+                        .controller
+                        ?.copyWith(showControls: false),
                   );
-                }
-                return MiniPlayerWidget(
-                  height: height,
-                  maxPlayerSize: maxPlayerSize,
-                  controller: context
-                      .watch<VideoPlayerBloc>()
-                      .controller
-                      ?.copyWith(showControls: false),
-                );
-              },
-            ),
-          );
-        },
-      ),
+                },
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

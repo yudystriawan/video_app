@@ -22,9 +22,13 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     VideoDetailRoute.name: (routeData) {
+      final args = routeData.argsAs<VideoDetailRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const VideoDetailPage(),
+        child: VideoDetailPage(
+          key: args.key,
+          miniplayerController: args.miniplayerController,
+        ),
       );
     },
     HomeRoute.name: (routeData) {
@@ -52,16 +56,40 @@ class VideoOverviewRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [VideoDetailPage]
-class VideoDetailRoute extends PageRouteInfo<void> {
-  const VideoDetailRoute({List<PageRouteInfo>? children})
-      : super(
+class VideoDetailRoute extends PageRouteInfo<VideoDetailRouteArgs> {
+  VideoDetailRoute({
+    Key? key,
+    required MiniplayerController miniplayerController,
+    List<PageRouteInfo>? children,
+  }) : super(
           VideoDetailRoute.name,
+          args: VideoDetailRouteArgs(
+            key: key,
+            miniplayerController: miniplayerController,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'VideoDetailRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<VideoDetailRouteArgs> page =
+      PageInfo<VideoDetailRouteArgs>(name);
+}
+
+class VideoDetailRouteArgs {
+  const VideoDetailRouteArgs({
+    this.key,
+    required this.miniplayerController,
+  });
+
+  final Key? key;
+
+  final MiniplayerController miniplayerController;
+
+  @override
+  String toString() {
+    return 'VideoDetailRouteArgs{key: $key, miniplayerController: $miniplayerController}';
+  }
 }
 
 /// generated route for
