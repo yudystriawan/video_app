@@ -2,11 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 
 import '../bloc/video_player/video_player_bloc.dart';
 
-class VideoSeekControllWidget extends HookWidget {
+class VideoSeekControllWidget extends StatefulWidget {
   const VideoSeekControllWidget({
     super.key,
     required this.onTapCallback,
@@ -15,29 +14,71 @@ class VideoSeekControllWidget extends HookWidget {
   final VoidCallback onTapCallback;
 
   @override
-  Widget build(BuildContext context) {
-    final showForwardEffect = useState(false);
-    final showRewindEffect = useState(false);
+  State<VideoSeekControllWidget> createState() =>
+      _VideoSeekControllWidgetState();
+}
 
+class _VideoSeekControllWidgetState extends State<VideoSeekControllWidget> {
+  bool isForwarding = false;
+  bool isRewinding = false;
+  Timer? timer;
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  // start timer when user skipping
+  void startTimer() {
+    timer?.cancel();
+    timer = Timer(const Duration(seconds: 1), () {
+      setState(() {
+        isRewinding = false;
+        isForwarding = false;
+      });
+    });
+  }
+
+  void resetTimer(bool status) {
+    timer?.cancel();
+    startTimer();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onDoubleTap: () {
-              showRewindEffect.value = true;
+              if (isRewinding) return;
+
+              setState(() {
+                isRewinding = true;
+                isForwarding = false;
+              });
 
               context
                   .read<VideoPlayerBloc>()
                   .add(const VideoPlayerEvent.skippedBackward());
 
-              Timer(const Duration(seconds: 1), () {
-                showRewindEffect.value = false;
-              });
+              startTimer();
             },
-            onTap: onTapCallback,
+            onTap: () {
+              if (isRewinding) {
+                context
+                    .read<VideoPlayerBloc>()
+                    .add(const VideoPlayerEvent.skippedBackward());
+                resetTimer(isRewinding);
+                return;
+              }
+
+              widget.onTapCallback.call();
+            },
             child: Opacity(
-              opacity: showRewindEffect.value ? 1 : 0,
+              opacity: isRewinding ? 1 : 0,
               child: Container(
                 height: double.infinity,
                 decoration: const BoxDecoration(
@@ -58,19 +99,32 @@ class VideoSeekControllWidget extends HookWidget {
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onDoubleTap: () {
-              showForwardEffect.value = true;
+              if (isForwarding) return;
+
+              setState(() {
+                isForwarding = true;
+                isRewinding = false;
+              });
 
               context
                   .read<VideoPlayerBloc>()
                   .add(const VideoPlayerEvent.skippedForward());
 
-              Timer(const Duration(seconds: 1), () {
-                showForwardEffect.value = false;
-              });
+              startTimer();
             },
-            onTap: onTapCallback,
+            onTap: () {
+              if (isForwarding) {
+                context
+                    .read<VideoPlayerBloc>()
+                    .add(const VideoPlayerEvent.skippedForward());
+                resetTimer(isForwarding);
+                return;
+              }
+
+              widget.onTapCallback.call();
+            },
             child: Opacity(
-              opacity: showForwardEffect.value ? 1 : 0,
+              opacity: isForwarding ? 1 : 0,
               child: Container(
                 height: double.infinity,
                 decoration: const BoxDecoration(
@@ -82,7 +136,6 @@ class VideoSeekControllWidget extends HookWidget {
                 ),
                 child: const Icon(
                   Icons.fast_forward,
-                  
                 ),
               ),
             ),
