@@ -14,7 +14,6 @@ double miniplayerPercentageDeclaration = 0.2;
 class MiniPlayerBloc extends Bloc<MiniPlayerEvent, MiniPlayerState> {
   MiniplayerController miniplayerController = MiniplayerController();
   ValueNotifier<double> playerExpandProgress = ValueNotifier(0.0);
-  bool _isExpanded = false;
 
   MiniPlayerBloc() : super(MiniPlayerState.initial()) {
     on<_Initialized>(_onInitialized);
