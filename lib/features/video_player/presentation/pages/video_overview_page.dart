@@ -14,13 +14,13 @@ class VideoOverviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
-        buildWhen: (p, c) => p.currentVideo != c.currentVideo,
-        builder: (context, state) {
-          final currentVideo = state.currentVideo;
-          return Stack(
-            children: [
-              Column(
+      body: Stack(
+        children: [
+          BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
+            buildWhen: (p, c) => p.currentVideo != c.currentVideo,
+            builder: (context, state) {
+              final currentVideo = state.currentVideo;
+              return Column(
                 children: [
                   AppBar(title: const Text('Videos')),
                   const Expanded(child: VideoListWidget()),
@@ -33,11 +33,14 @@ class VideoOverviewPage extends StatelessWidget {
                       },
                     ),
                 ],
-              ),
-              if (currentVideo != null) const VideoDetailPage(),
-            ],
-          );
-        },
+              );
+            },
+          ),
+          VideoDetailPage(
+            miniplayerController:
+                context.watch<MiniPlayerBloc>().miniplayerController,
+          ),
+        ],
       ),
     );
   }

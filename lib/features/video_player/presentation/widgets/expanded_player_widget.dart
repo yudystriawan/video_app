@@ -39,38 +39,40 @@ class ExpandedPlayerWidget extends StatelessWidget {
             ? maxPlayerSize
             : heightWithoutPadding;
 
-        return Column(
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: VideoScreen(
-                width: width,
-                height: playerheight,
-                controller: controller,
+        return SafeArea(
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: VideoScreen(
+                  width: width,
+                  height: playerheight,
+                  controller: controller,
+                ),
               ),
-            ),
-            BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
-              buildWhen: (p, c) => p.currentVideo != c.currentVideo,
-              builder: (context, state) {
-                return Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 33),
-                    child: Opacity(
-                      opacity: percentageExpandedPlayer,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Flexible(
-                            child: Text(state.currentVideo?.title ?? '-'),
-                          ),
-                        ],
+              BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
+                buildWhen: (p, c) => p.currentVideo != c.currentVideo,
+                builder: (context, state) {
+                  return Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 33),
+                      child: Opacity(
+                        opacity: percentageExpandedPlayer,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Flexible(
+                              child: Text(state.currentVideo?.title ?? '-'),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ],
+                  );
+                },
+              ),
+            ],
+          ),
         );
       },
     );
