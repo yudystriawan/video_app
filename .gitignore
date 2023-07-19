@@ -46,3 +46,6 @@ app.*.map.json
 # Generated files
 *.freezed.dart
 *.g.dart
+
+# fvm
+.fvm/flutter_sdk
