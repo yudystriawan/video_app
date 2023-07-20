@@ -2,6 +2,7 @@
 
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:kt_dart/collection.dart';
 import 'package:video_app/core/errors/failures.dart';
 import 'package:video_app/core/usecases/usecase.dart';
@@ -13,6 +14,7 @@ part 'video_loader_bloc.freezed.dart';
 part 'video_loader_event.dart';
 part 'video_loader_state.dart';
 
+@injectable
 class VideoLoaderBloc extends Bloc<VideoLoaderEvent, VideoLoaderState> {
   final GetVideos _getVideos;
 

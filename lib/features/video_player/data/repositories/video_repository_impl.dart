@@ -1,10 +1,12 @@
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import 'package:kt_dart/collection.dart';
 import 'package:video_app/core/errors/failures.dart';
 import 'package:video_app/features/video_player/data/datasources/video_local_data_source.dart';
 import 'package:video_app/features/video_player/domain/enitities/video.dart';
 import 'package:video_app/features/video_player/domain/repositories/video_repository.dart';
 
+@Injectable(as: VideoRepository)
 class VideoRepositoryImpl implements VideoRepository {
   final VideoLocalDataSource _dataSource;
 

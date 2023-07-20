@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import 'package:kt_dart/collection.dart';
 import 'package:video_app/core/errors/failures.dart';
 import 'package:video_app/core/usecases/usecase.dart';
@@ -6,6 +7,7 @@ import 'package:video_app/features/video_player/domain/repositories/video_reposi
 
 import '../enitities/video.dart';
 
+@injectable
 class GetVideos implements Usecase<KtList<Video>, NoParams> {
   final VideoRepository _repository;
 
