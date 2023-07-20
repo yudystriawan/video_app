@@ -1,18 +1,17 @@
-
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 
 class VideoScreen extends StatelessWidget {
   const VideoScreen({
     Key? key,
-    required this.width,
-    required this.height,
+    this.width,
+    this.height,
     this.showControl = true,
     this.controller,
   }) : super(key: key);
 
-  final double width;
-  final double height;
+  final double? width;
+  final double? height;
   final bool showControl;
   final ChewieController? controller;
 
