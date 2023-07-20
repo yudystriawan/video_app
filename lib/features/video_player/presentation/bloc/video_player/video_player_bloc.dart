@@ -5,9 +5,10 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:chewie/chewie.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:video_app/features/video_player/data/model/video.dart';
 import 'package:video_app/features/video_player/presentation/widgets/video_controls.dart';
 import 'package:video_player/video_player.dart';
+
+import '../../../domain/enitities/video.dart';
 
 part 'video_player_bloc.freezed.dart';
 part 'video_player_event.dart';
