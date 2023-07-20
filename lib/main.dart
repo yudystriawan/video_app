@@ -44,6 +44,13 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
+        builder: (context, child) {
+          final height = MediaQuery.of(context).size.height;
+          context
+              .read<MiniPlayerBloc>()
+              .add(MiniPlayerEvent.initialized(min: 72, max: height));
+          return child!;
+        },
       ),
     );
   }

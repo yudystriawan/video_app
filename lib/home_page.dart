@@ -9,33 +9,8 @@ import 'features/video_player/presentation/pages/video_overview_page.dart';
 import 'injection.dart';
 
 @RoutePage()
-class HomePage extends StatefulWidget implements AutoRouteWrapper {
+class HomePage extends StatelessWidget implements AutoRouteWrapper {
   const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-
-  @override
-  Widget wrappedRoute(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          getIt<VideoLoaderBloc>()..add(const VideoLoaderEvent.fetched()),
-      child: this,
-    );
-  }
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final height = MediaQuery.of(context).size.height;
-
-    context.read<MiniPlayerBloc>().add(MiniPlayerEvent.initialized(
-          min: 72,
-          max: height,
-        ));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +62,15 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ),
+    );
+  }
+
+  @override
+  Widget wrappedRoute(BuildContext context) {
+    return BlocProvider(
+      create: (context) =>
+          getIt<VideoLoaderBloc>()..add(const VideoLoaderEvent.fetched()),
+      child: this,
     );
   }
 }
