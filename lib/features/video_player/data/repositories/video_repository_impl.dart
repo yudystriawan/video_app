@@ -13,7 +13,7 @@ class VideoRepositoryImpl implements VideoRepository {
   VideoRepositoryImpl(this._dataSource);
 
   @override
-  Future<Either<Failure, KtList<Video>>> getVideos() async {
+  Future<Either<Failure, KtList<Video>>> getVideos({String? query}) async {
     try {
       final result = await _dataSource.getVideos();
 

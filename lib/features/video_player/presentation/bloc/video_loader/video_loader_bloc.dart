@@ -5,7 +5,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:kt_dart/collection.dart';
 import 'package:video_app/core/errors/failures.dart';
-import 'package:video_app/core/usecases/usecase.dart';
 import 'package:video_app/features/video_player/domain/usecases/get_videos.dart';
 
 import '../../../domain/enitities/video.dart';
@@ -30,7 +29,7 @@ class VideoLoaderBloc extends Bloc<VideoLoaderEvent, VideoLoaderState> {
   ) async {
     emit(const VideoLoaderState.loadInProgress());
 
-    final failureOrVideos = await _getVideos(const NoParams());
+    final failureOrVideos = await _getVideos(Params(event.query));
 
     emit(failureOrVideos.fold(
       (f) => VideoLoaderState.loadFailure(f),

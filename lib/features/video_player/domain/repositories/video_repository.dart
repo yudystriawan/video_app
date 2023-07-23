@@ -5,5 +5,5 @@ import 'package:video_app/features/video_player/domain/enitities/video.dart';
 import '../../../../core/errors/failures.dart';
 
 abstract class VideoRepository {
-  Future<Either<Failure, KtList<Video>>> getVideos();
+  Future<Either<Failure, KtList<Video>>> getVideos({String? query});
 }
