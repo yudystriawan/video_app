@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:video_app/injection.dart';
+import 'package:video_app/routes/router.dart';
 
 import 'core/utils/bloc_observer.dart';
 import 'features/video_player/presentation/bloc/mini_player/mini_player_bloc.dart';
 import 'features/video_player/presentation/bloc/video_player/video_player_bloc.dart';
-import 'router/router.dart';
 
 void main() {
+  configureDependencies();
   setupBlocObserver();
   runApp(const MyApp());
 }
@@ -42,6 +44,13 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
+        builder: (context, child) {
+          final height = MediaQuery.of(context).size.height;
+          context
+              .read<MiniPlayerBloc>()
+              .add(MiniPlayerEvent.initialized(min: 72, max: height));
+          return child!;
+        },
       ),
     );
   }

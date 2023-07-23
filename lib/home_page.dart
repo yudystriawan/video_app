@@ -1,30 +1,16 @@
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'features/video_player/presentation/pages/video_overview_page.dart';
+
 import 'core/utils/util.dart';
 import 'features/video_player/presentation/bloc/mini_player/mini_player_bloc.dart';
+import 'features/video_player/presentation/bloc/video_loader/video_loader_bloc.dart';
+import 'features/video_player/presentation/pages/video_overview_page.dart';
+import 'injection.dart';
 
 @RoutePage()
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget implements AutoRouteWrapper {
   const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final height = MediaQuery.of(context).size.height;
-
-    context.read<MiniPlayerBloc>().add(MiniPlayerEvent.initialized(
-          min: 72,
-          max: height,
-        ));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +62,15 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ),
+    );
+  }
+
+  @override
+  Widget wrappedRoute(BuildContext context) {
+    return BlocProvider(
+      create: (context) =>
+          getIt<VideoLoaderBloc>()..add(const VideoLoaderEvent.fetched()),
+      child: this,
     );
   }
 }

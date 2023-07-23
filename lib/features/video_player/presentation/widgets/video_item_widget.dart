@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../data/model/video.dart';
+import '../../domain/enitities/video.dart';
 import '../bloc/mini_player/mini_player_bloc.dart';
 import '../bloc/video_player/video_player_bloc.dart';
 
@@ -18,7 +18,7 @@ class VideoItemWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         context.read<MiniPlayerBloc>().add(const MiniPlayerEvent.expanded());
-        
+
         context
             .read<VideoPlayerBloc>()
             .add(VideoPlayerEvent.played(video: video));

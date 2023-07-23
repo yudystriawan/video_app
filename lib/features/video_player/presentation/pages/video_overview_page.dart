@@ -23,7 +23,9 @@ class VideoOverviewPage extends StatelessWidget {
               return Column(
                 children: [
                   AppBar(title: const Text('Videos')),
-                  const Expanded(child: VideoListWidget()),
+                  const Expanded(
+                    child: VideoListWidget(),
+                  ),
                   if (currentVideo != null)
                     BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
                       builder: (context, state) {

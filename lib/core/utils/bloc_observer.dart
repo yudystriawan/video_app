@@ -26,6 +26,6 @@ class SimpleBlocObserver extends BlocObserver {
   @override
   void onTransition(Bloc bloc, Transition transition) {
     super.onTransition(bloc, transition);
-    log('onTransition: ${bloc.runtimeType}\ntransition: $transition');
+    // log('onTransition: ${bloc.runtimeType}\ntransition: $transition');
   }
 }
