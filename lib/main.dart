@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:video_app/features/search/data/datasources/hive/query_model.dart';
 
 import 'core/utils/bloc_observer.dart';
 import 'features/video/presentation/bloc/mini_player/mini_player_bloc.dart';
@@ -7,7 +9,10 @@ import 'features/video/presentation/bloc/video_player/video_player_bloc.dart';
 import 'injection.dart';
 import 'routes/router.dart';
 
-void main() {
+Future<void> main() async {
+  // initialized local database
+  await Hive.initFlutter();
+
   configureDependencies();
   setupBlocObserver();
   runApp(const MyApp());
@@ -15,6 +20,11 @@ void main() {
 
 void setupBlocObserver() {
   Bloc.observer = SimpleBlocObserver();
+}
+
+// hive's adapters
+void registerTypeAdapters() {
+  Hive.registerAdapter(QueryModelAdapter());
 }
 
 class MyApp extends StatefulWidget {
