@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:video_app/core/widgets/round_container.dart';
-import 'package:video_app/features/video_player/presentation/widgets/video_duration_widget.dart';
-import 'package:video_app/features/video_player/presentation/widgets/video_progress_slider.dart';
-import 'package:video_app/features/video_player/presentation/widgets/video_seek_controll_widget.dart';
 
+import '../../../../core/widgets/round_container.dart';
 import '../bloc/video_player/video_player_bloc.dart';
+import 'video_duration_widget.dart';
+import 'video_progress_slider.dart';
+import 'video_seek_controll_widget.dart';
 
 class VideoControls extends StatefulWidget {
   const VideoControls({super.key});

@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:video_app/core/utils/util.dart';
 
+import '../../../../core/utils/util.dart';
 import '../bloc/video_player/video_player_bloc.dart';
 
 class VideoProgressSlider extends HookWidget {

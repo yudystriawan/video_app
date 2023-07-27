@@ -5,9 +5,9 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:kt_dart/collection.dart';
 import 'package:video_app/core/errors/failures.dart';
-import 'package:video_app/features/video_player/domain/usecases/get_videos.dart';
 
 import '../../../domain/enitities/video.dart';
+import '../../../domain/usecases/get_videos.dart';
 
 part 'video_loader_bloc.freezed.dart';
 part 'video_loader_event.dart';

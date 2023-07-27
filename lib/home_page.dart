@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/utils/util.dart';
-import 'features/video_player/presentation/bloc/mini_player/mini_player_bloc.dart';
-import 'features/video_player/presentation/bloc/video_loader/video_loader_bloc.dart';
-import 'features/video_player/presentation/pages/video_overview_page.dart';
+import 'features/video/presentation/bloc/mini_player/mini_player_bloc.dart';
+import 'features/video/presentation/bloc/video_loader/video_loader_bloc.dart';
+import 'features/video/presentation/pages/video_overview_page.dart';
 import 'injection.dart';
 
 @RoutePage()

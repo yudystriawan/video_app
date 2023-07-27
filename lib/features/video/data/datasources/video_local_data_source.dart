@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
-import 'package:video_app/core/errors/failures.dart';
 
+import '../../../../core/errors/failures.dart';
 import '../model/video_dto.dart';
 
 abstract class VideoLocalDataSource {
