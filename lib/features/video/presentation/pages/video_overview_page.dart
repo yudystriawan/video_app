@@ -97,6 +97,8 @@ class VideoOverviewContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasInitialKeyword = initialKeyword?.isNotEmpty ?? false;
+
     return SafeArea(
       child: Stack(
         children: [
@@ -174,9 +176,10 @@ class VideoOverviewContent extends StatelessWidget {
                           indent: 12.w,
                           endIndent: 12.w,
                         ),
-                        SizedBox(
-                          height: 48.w,
-                        )
+                        if (!hasInitialKeyword)
+                          SizedBox(
+                            height: 48.w,
+                          )
                       ],
                     ),
                     const VideoListWidget(),

@@ -17,34 +17,38 @@ class MyAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasParent = context.router.canPop();
+    return Builder(
+      builder: (context) {
+        final hasParent = context.router.canPop();
 
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 12.w),
-      height: 48.w,
-      child: Row(
-        children: [
-          if (hasParent) ...[
-            leading ??
-                AppIcon(
-                  icon: const Icon(Icons.arrow_back),
-                  onTap: () => context.router.pop(),
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: 12.w),
+          height: 48.w,
+          child: Row(
+            children: [
+              if (hasParent) ...[
+                leading ??
+                    AppIcon(
+                      icon: const Icon(Icons.arrow_back),
+                      onTap: () => context.router.pop(),
+                    ),
+                SizedBox(
+                  width: 12.w,
                 ),
-            SizedBox(
-              width: 12.w,
-            ),
-          ],
-          Expanded(
-            child: title,
+              ],
+              Expanded(
+                child: title,
+              ),
+              if (trailing != null) ...{
+                SizedBox(
+                  width: 12.w,
+                ),
+                trailing!,
+              },
+            ],
           ),
-          if (trailing != null) ...{
-            SizedBox(
-              width: 12.w,
-            ),
-            trailing!,
-          },
-        ],
-      ),
+        );
+      },
     );
   }
 }

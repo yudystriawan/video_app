@@ -16,7 +16,7 @@ class VideoRepositoryImpl implements VideoRepository {
   @override
   Future<Either<Failure, KtList<Video>>> getVideos({String? query}) async {
     try {
-      final result = await _dataSource.getVideos();
+      final result = await _dataSource.getVideos(query: query);
 
       final videos = result?.map((e) => e.toDomain()).toImmutableList();
 
