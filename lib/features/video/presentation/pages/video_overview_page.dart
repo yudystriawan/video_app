@@ -73,31 +73,6 @@ class VideoOverviewPage extends StatelessWidget implements AutoRouteWrapper {
                   ),
                 ),
               );
-
-              // return SizedBox(
-              //   height: kBottomNavigationBarHeight -
-              //       kBottomNavigationBarHeight * value,
-              //   child: Transform.translate(
-              //     offset: Offset(0.0, kBottomNavigationBarHeight * value * 0.5),
-              //     child: Opacity(
-              //       opacity: opacity,
-              //       child: OverflowBox(
-              //         maxHeight: kBottomNavigationBarHeight,
-              //         child: BottomNavigationBar(
-              //           currentIndex: 0,
-              //           selectedItemColor: Colors.blue,
-              //           items: const <BottomNavigationBarItem>[
-              //             BottomNavigationBarItem(
-              //                 icon: Icon(Icons.home), label: 'Feed'),
-              //             BottomNavigationBarItem(
-              //                 icon: Icon(Icons.library_books),
-              //                 label: 'Library'),
-              //           ],
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // );
             },
           );
         },
