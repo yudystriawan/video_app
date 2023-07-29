@@ -22,15 +22,8 @@ class VideoListWidget extends StatelessWidget {
 
             if (videos.isEmpty()) return const Text('Kosong');
 
-            return ListView.separated(
-              padding: const EdgeInsets.all(16),
+            return ListView.builder(
               itemCount: videos.size,
-              separatorBuilder: (BuildContext context, int index) {
-                return const Divider(
-                  height: 32,
-                  thickness: 3,
-                );
-              },
               itemBuilder: (BuildContext context, int index) {
                 final video = videos[index];
                 return VideoItemWidget(video: video);

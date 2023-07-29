@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:video_app/features/search/data/datasources/hive/query_model.dart';
 
@@ -48,18 +49,24 @@ class _MyAppState extends State<MyApp> {
           create: (context) => MiniPlayerBloc(),
         ),
       ],
-      child: MaterialApp.router(
-        routerConfig: _appRouter.config(),
-        title: 'Video App Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
+      child: ScreenUtilInit(
+        designSize: const Size(360, 800),
+        minTextAdapt: true,
         builder: (context, child) {
-          final height = MediaQuery.of(context).size.height;
-          context
-              .read<MiniPlayerBloc>()
-              .add(MiniPlayerEvent.initialized(min: 72, max: height));
-          return child!;
+          return MaterialApp.router(
+            routerConfig: _appRouter.config(),
+            title: 'Video App Demo',
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+            ),
+            builder: (context, child) {
+              final height = MediaQuery.of(context).size.height;
+              context
+                  .read<MiniPlayerBloc>()
+                  .add(MiniPlayerEvent.initialized(min: 72, max: height));
+              return child!;
+            },
+          );
         },
       ),
     );
