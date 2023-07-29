@@ -8,7 +8,12 @@ import 'injection.dart';
 
 @RoutePage()
 class HomePage extends StatelessWidget implements AutoRouteWrapper {
-  const HomePage({super.key});
+  const HomePage({
+    Key? key,
+    this.initialKeyword,
+  }) : super(key: key);
+
+  final String? initialKeyword;
 
   @override
   Widget build(BuildContext context) {

@@ -14,8 +14,7 @@ class AppRouter extends _$AppRouter {
   @override
   List<AutoRoute> get routes {
     return [
-      AutoRoute(page: HomeRoute.page, path: '/'),
-      AutoRoute(page: VideoOverviewRoute.page, path: '/videos'),
+      AutoRoute(page: VideoOverviewRoute.page, path: '/videos', initial: true),
       AutoRoute(page: VideoDetailRoute.page, path: '/video'),
       AutoRoute(page: SearchRoute.page),
     ];

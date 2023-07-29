@@ -2,10 +2,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_app/features/search/presentation/widgets/list_history_widget.dart';
-import 'package:video_app/features/search/presentation/widgets/search_form_widget.dart';
 import 'package:video_app/injection.dart';
-import 'package:video_app/shared/widgets/app_bar.dart';
 
+import '../../../../routes/router.dart';
+import '../../../../shared/widgets/search_bar.dart';
 import '../bloc/search/search_bloc.dart';
 
 @RoutePage()
@@ -19,14 +19,25 @@ class SearchPage extends StatelessWidget implements AutoRouteWrapper {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            MyAppBar(
-              title: SearchFormWidget(),
+            MySearchBar(
+              initialText: inititalKeyword,
+              onChanged: (value) => context
+                  .read<SearchBloc>()
+                  .add(SearchEvent.keywordChanged(value)),
+              onSubmitted: (value) {
+                context.read<SearchBloc>().add(const SearchEvent.submitted());
+                context.router
+                    .popAndPush(VideoOverviewRoute(initialKeyword: value));
+              },
+              onClear: () => context
+                  .read<SearchBloc>()
+                  .add(const SearchEvent.keywordChanged('')),
             ),
-            Expanded(
+            const Expanded(
               child: ListHistoryWidget(),
             ),
           ],

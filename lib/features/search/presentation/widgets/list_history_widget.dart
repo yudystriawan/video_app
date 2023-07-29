@@ -1,6 +1,8 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:video_app/routes/router.dart';
 import 'package:video_app/shared/widgets/icon.dart';
 
 import '../bloc/search/search_bloc.dart';
@@ -29,6 +31,8 @@ class ListHistoryWidget extends StatelessWidget {
               onLongPress: () => context
                   .read<SearchBloc>()
                   .add(SearchEvent.historyRemoved(history)),
+              onTap: () => context.router
+                  .popAndPush(VideoOverviewRoute(initialKeyword: history)),
               child: Row(
                 children: [
                   const AppIcon(
