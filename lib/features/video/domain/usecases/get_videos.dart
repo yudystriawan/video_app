@@ -9,21 +9,21 @@ import '../enitities/video.dart';
 import '../repositories/video_repository.dart';
 
 @injectable
-class GetVideos implements Usecase<KtList<Video>, Params> {
+class GetVideos implements Usecase<KtList<Video>, GetVideosParams> {
   final VideoRepository _repository;
 
   GetVideos(this._repository);
 
   @override
-  Future<Either<Failure, KtList<Video>>> call(Params params) async {
+  Future<Either<Failure, KtList<Video>>> call(GetVideosParams params) async {
     return await _repository.getVideos(query: params.query);
   }
 }
 
-class Params extends Equatable {
+class GetVideosParams extends Equatable {
   final String? query;
 
-  const Params(this.query);
+  const GetVideosParams(this.query);
 
   @override
   List<Object?> get props => [query];
