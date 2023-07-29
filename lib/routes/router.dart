@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:miniplayer/miniplayer.dart';
+import 'package:video_app/features/search/presentation/pages/search_page.dart';
 
 import '../features/video/presentation/pages/video_detail_page.dart';
 import '../features/video/presentation/pages/video_overview_page.dart';
@@ -16,6 +17,7 @@ class AppRouter extends _$AppRouter {
       AutoRoute(page: HomeRoute.page, path: '/'),
       AutoRoute(page: VideoOverviewRoute.page, path: '/videos'),
       AutoRoute(page: VideoDetailRoute.page, path: '/video'),
+      AutoRoute(page: SearchRoute.page),
     ];
   }
 }
