@@ -29,7 +29,11 @@ class VideoOverviewPage extends StatelessWidget {
                       children: [
                         const MyAppBar(),
                         Divider(
-                          height: 24.w,
+                          indent: 12.w,
+                          endIndent: 12.w,
+                        ),
+                        SizedBox(
+                          height: 48.w,
                         )
                       ],
                     ),

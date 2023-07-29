@@ -1,5 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:video_app/routes/router.dart';
 import 'package:video_app/shared/widgets/icon.dart';
 
 class MyAppBar extends StatelessWidget {
@@ -9,7 +11,7 @@ class MyAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 338.w,
-      height: 28.w,
+      height: 48.w,
       child: Row(
         children: [
           const Expanded(
@@ -27,7 +29,7 @@ class MyAppBar extends StatelessWidget {
           ),
           AppIcon(
             icon: const Icon(Icons.search),
-            onTap: () {},
+            onTap: () => context.pushRoute(SearchRoute()),
           ),
           SizedBox(
             width: 12.w,
