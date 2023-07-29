@@ -6,6 +6,6 @@ part 'query.freezed.dart';
 class Query with _$Query {
   const Query._();
   const factory Query({
-    required String keyword,
+    String? keyword,
   }) = _Query;
 }

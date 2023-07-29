@@ -8,12 +8,12 @@ import 'package:video_app/features/search/domain/entities/query.dart';
 import 'package:video_app/features/search/domain/repositories/search_repository.dart';
 
 class GetSearchParams extends Equatable {
-  final String keyword;
+  final String? keyword;
 
   const GetSearchParams(this.keyword);
 
   @override
-  List<Object> get props => [keyword];
+  List<Object?> get props => [keyword];
 }
 
 @injectable

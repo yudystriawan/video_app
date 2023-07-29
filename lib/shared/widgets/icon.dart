@@ -20,12 +20,12 @@ class AppIcon extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(4.r),
+        borderRadius: BorderRadius.circular(12.r),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(4.r),
+          borderRadius: BorderRadius.circular(12.r),
           onTap: onTap,
           child: SizedBox(
             width: size,

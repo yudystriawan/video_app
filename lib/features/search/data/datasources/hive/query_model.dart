@@ -5,9 +5,13 @@ part 'query_model.g.dart';
 @HiveType(typeId: 1)
 class QueryModel extends HiveObject {
   @HiveField(0)
-  String keyword;
+  String? keyword;
+
+  @HiveField(1)
+  String? createdAt;
 
   QueryModel({
-    required this.keyword,
+    this.keyword,
+    this.createdAt,
   });
 }

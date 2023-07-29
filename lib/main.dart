@@ -14,6 +14,9 @@ Future<void> main() async {
   // initialized local database
   await Hive.initFlutter();
 
+  // register adapters
+  registerTypeAdapters();
+
   configureDependencies();
   setupBlocObserver();
   runApp(const MyApp());

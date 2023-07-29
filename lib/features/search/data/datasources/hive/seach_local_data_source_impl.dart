@@ -1,23 +1,24 @@
+import 'dart:developer';
+
 import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
 import 'package:video_app/core/errors/failures.dart';
+import 'package:video_app/features/search/data/datasources/hive/query_model.dart';
 import 'package:video_app/features/search/data/datasources/search_local_data_source.dart';
-import 'package:video_app/features/search/data/models/query_dto.dart';
 
 @Injectable(as: SearchLocalDataSource)
 class SearchLocalDataSourceImpl implements SearchLocalDataSource {
   final _searchBox = 'searchBox';
-  late Box<QueryModel> _box;
 
-  @PostConstruct()
-  init() async {
-    _box = await Hive.openBox<QueryModel>(_searchBox);
+  Future<Box<QueryModel>> _openBox() async {
+    return Hive.openBox<QueryModel>(_searchBox);
   }
 
   @override
-  Future<void> deleteAll() async {
+  Future<void> clear() async {
     try {
-      await _box.deleteAll(_box.keys);
+      final box = await _openBox();
+      await box.deleteAll(box.keys);
     } catch (e) {
       throw const Failure.unexpectedError();
     }
@@ -26,18 +27,39 @@ class SearchLocalDataSourceImpl implements SearchLocalDataSource {
   @override
   Future<List<String>> getHistories({String? keyword}) async {
     try {
-      final histories = _box.values;
+      final box = await _openBox();
+      List<QueryModel> histories = box.values.toList();
 
       // get keyword that does not null and not empty
-      final filteredHistories = histories
-          .where((element) =>
-              element.keyword != null && element.keyword!.isNotEmpty)
-          .toList();
+      if (keyword != null && keyword.isNotEmpty) {
+        histories = histories
+            .where((element) =>
+                element.keyword
+                    ?.toLowerCase()
+                    .contains(keyword.toLowerCase()) ??
+                false)
+            .toList();
+      }
 
-      final result = filteredHistories.map((e) => e.keyword!).toList();
+      // sort descending order
+      histories.sort(
+        (a, b) {
+          if (a.createdAt != null && b.createdAt != null) {
+            final createdAtB = DateTime.parse(b.createdAt!);
+            final createdAtA = DateTime.parse(a.createdAt!);
+
+            return createdAtB.compareTo(createdAtA);
+          }
+
+          return -1;
+        },
+      );
+
+      final result = histories.map((e) => e.keyword ?? '').toList();
 
       return result;
     } catch (e) {
+      log('getHistories', error: e);
       throw const Failure.unexpectedError();
     }
   }
@@ -45,8 +67,23 @@ class SearchLocalDataSourceImpl implements SearchLocalDataSource {
   @override
   Future<void> storeKeyword(String keyword) async {
     try {
-      await _box.add(QueryModel(keyword: keyword));
+      final box = await _openBox();
+      final histories = box.values.toList();
+
+      // check if keyword exist
+      final filteredHistories = histories
+          .where((element) =>
+              element.keyword?.toLowerCase() == keyword.toLowerCase())
+          .toList();
+
+      if (filteredHistories.isNotEmpty) return;
+
+      await box.add(QueryModel(
+        keyword: keyword,
+        createdAt: DateTime.now().toIso8601String(),
+      ));
     } catch (e) {
+      log('storeKeyword', error: e);
       throw const Failure.unexpectedError();
     }
   }
@@ -54,7 +91,14 @@ class SearchLocalDataSourceImpl implements SearchLocalDataSource {
   @override
   Future<void> deleteKeyword(String keyword) async {
     try {
-      await _box.delete(keyword);
+      final box = await _openBox();
+      final histories = box.toMap();
+
+      for (var history in histories.entries) {
+        if (history.value.keyword == keyword) {
+          await box.delete(history.key);
+        }
+      }
     } catch (e) {
       throw const Failure.unexpectedError();
     }

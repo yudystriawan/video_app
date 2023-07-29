@@ -25,6 +25,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     this._removeSearchKeyword,
     this._saveSearchKeyword,
   ) : super(SearchState.initial()) {
+    on<_Fetched>(_onFetched);
     on<_KeywordChanged>(_onKeywordChanged);
     on<_HistoryRemoved>(_onHistoryRemoved);
     on<_Submitted>(_onSubmitted);
@@ -36,12 +37,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     );
   }
 
-  _fetchHistories(
-    String keyword,
+  void _onFetched(
+    _Fetched event,
     Emitter<SearchState> emit,
   ) async {
     final failureOrHistories =
-        await _getSearchHistory(GetSearchParams(keyword));
+        await _getSearchHistory(GetSearchParams(event.keyword));
     emit(failureOrHistories.fold(
       (f) => state,
       (histories) => state.copyWith(histories: histories),
@@ -63,11 +64,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       _searchStarted();
 
       _cancelableOperation?.value.whenComplete(
-        () => _fetchHistories(keyword, emit),
+        () => add(SearchEvent.fetched(keyword)),
       );
-
-      //save keyword
-      await _saveSearchKeyword(SaveSearchKeywordParams(keyword));
     }
   }
 
@@ -77,13 +75,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   ) async {
     final keyword = event.keyword;
 
-    final failureOrSuccess =
-        await _removeSearchKeyword(RemoveSearchParams(keyword));
+    await _removeSearchKeyword(RemoveSearchParams(keyword));
 
-    emit(await failureOrSuccess.fold(
-      (f) async => state,
-      (_) async => await _fetchHistories(keyword, emit),
-    ));
+    add(const SearchEvent.fetched());
   }
 
   void _onSubmitted(
@@ -91,5 +85,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     Emitter<SearchState> emit,
   ) async {
     await _saveSearchKeyword(SaveSearchKeywordParams(state.keyword));
+    // add(const SearchEvent.fetched());
   }
 }
