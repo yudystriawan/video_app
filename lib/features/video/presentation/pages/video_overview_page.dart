@@ -23,32 +23,32 @@ class VideoOverviewPage extends StatelessWidget {
               buildWhen: (p, c) => p.currentVideo != c.currentVideo,
               builder: (context, state) {
                 final currentVideo = state.currentVideo;
-                return Column(
-                  children: [
-                    Column(
-                      children: [
-                        const MyAppBar(),
-                        Divider(
-                          indent: 12.w,
-                          endIndent: 12.w,
-                        ),
-                        SizedBox(
-                          height: 48.w,
-                        )
-                      ],
-                    ),
-                    const Expanded(
-                      child: VideoListWidget(),
-                    ),
-                    if (currentVideo != null)
-                      BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
-                        builder: (context, state) {
-                          return SizedBox(
-                            height: state.playerMinHeight,
-                          );
-                        },
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Column(
+                        children: [
+                          const MyAppBar(),
+                          Divider(
+                            indent: 12.w,
+                            endIndent: 12.w,
+                          ),
+                          SizedBox(
+                            height: 48.w,
+                          )
+                        ],
                       ),
-                  ],
+                      const VideoListWidget(),
+                      if (currentVideo != null)
+                        BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
+                          builder: (context, state) {
+                            return SizedBox(
+                              height: state.playerMinHeight,
+                            );
+                          },
+                        ),
+                    ],
+                  ),
                 );
               },
             ),
