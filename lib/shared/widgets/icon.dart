@@ -7,15 +7,28 @@ class AppIcon extends StatelessWidget {
     required this.icon,
     this.onTap,
     this.size,
+    this.color,
   }) : super(key: key);
 
   final Widget icon;
   final VoidCallback? onTap;
   final double? size;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     final size = this.size ?? 24.w;
+
+    Widget icon = this.icon;
+    if (color != null) {
+      if (icon is Icon) {
+        icon = Icon(
+          icon.icon,
+          color: color,
+        );
+      }
+    }
+
     return Container(
       width: size,
       height: size,

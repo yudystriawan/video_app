@@ -66,7 +66,7 @@ class _MyAppState extends State<MyApp> {
               final height = MediaQuery.of(context).size.height;
               context
                   .read<MiniPlayerBloc>()
-                  .add(MiniPlayerEvent.initialized(min: 72, max: height));
+                  .add(MiniPlayerEvent.initialized(min: 76.w, max: height));
               return child!;
             },
           );
