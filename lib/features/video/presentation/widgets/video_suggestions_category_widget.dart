@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:video_app/shared/widgets/elevated_button.dart';
+
+import '../../../../shared/widgets/elevated_button.dart';
 
 class VideoSuggestionsCategoryWidget extends StatelessWidget {
   const VideoSuggestionsCategoryWidget({super.key});

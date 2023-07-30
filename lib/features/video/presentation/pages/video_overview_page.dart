@@ -2,10 +2,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../shared/widgets/app_bar.dart';
 
 import '../../../../injection.dart';
 import '../../../../routes/router.dart';
+import '../../../../shared/widgets/app_bar.dart';
 import '../../../../shared/widgets/icon.dart';
 import '../bloc/video_loader/video_loader_bloc.dart';
 import '../widgets/video_list_widget.dart';
