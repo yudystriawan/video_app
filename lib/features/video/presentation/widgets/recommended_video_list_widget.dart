@@ -5,7 +5,12 @@ import '../bloc/recommended_video_loader/recommended_video_loader_bloc.dart';
 import 'video_item_widget.dart';
 
 class RecommendedVideoListWidget extends StatelessWidget {
-  const RecommendedVideoListWidget({super.key});
+  const RecommendedVideoListWidget({
+    Key? key,
+    this.controller,
+  }) : super(key: key);
+
+  final ScrollController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +28,7 @@ class RecommendedVideoListWidget extends StatelessWidget {
             if (videos.isEmpty()) return const Text('Kosong');
 
             return ListView.builder(
+              controller: controller,
               itemCount: videos.size,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
