@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:video_app/shared/widgets/category_button.dart';
-import 'package:video_app/shared/widgets/icon.dart';
+
+import '../../../../shared/widgets/elevated_button.dart';
+import '../../../../shared/widgets/icon.dart';
 
 class VideoFunctionsWidget extends StatelessWidget {
   const VideoFunctionsWidget({super.key});
@@ -16,7 +17,7 @@ class VideoFunctionsWidget extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 12.w),
         child: Row(
           children: [
-            CategoryButton(
+            AppElevatedButton(
               child: Row(
                 children: [
                   AppIcon(
@@ -47,7 +48,7 @@ class VideoFunctionsWidget extends StatelessWidget {
             SizedBox(
               width: 12.w,
             ),
-            CategoryButton(
+            AppElevatedButton(
               child: Row(
                 children: [
                   Icon(
@@ -68,7 +69,7 @@ class VideoFunctionsWidget extends StatelessWidget {
             SizedBox(
               width: 12.w,
             ),
-            CategoryButton(
+            AppElevatedButton(
               child: Row(
                 children: [
                   Icon(
@@ -89,7 +90,7 @@ class VideoFunctionsWidget extends StatelessWidget {
             SizedBox(
               width: 12.w,
             ),
-            CategoryButton(
+            AppElevatedButton(
               child: Row(
                 children: [
                   Icon(

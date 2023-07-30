@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CategoryButton extends StatelessWidget {
-  const CategoryButton({
+class AppElevatedButton extends StatelessWidget {
+  const AppElevatedButton({
     Key? key,
     this.onTap,
     required this.child,
