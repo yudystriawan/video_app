@@ -54,7 +54,7 @@ class _MyAppState extends State<MyApp> {
         ),
       ],
       child: ScreenUtilInit(
-        designSize: const Size(360, 800),
+        designSize: const Size(375, 812),
         minTextAdapt: true,
         builder: (context, child) {
           return MaterialApp.router(
