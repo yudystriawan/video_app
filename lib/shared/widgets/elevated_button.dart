@@ -6,10 +6,12 @@ class AppElevatedButton extends StatelessWidget {
     Key? key,
     this.onTap,
     required this.child,
+    this.radius,
   }) : super(key: key);
 
   final VoidCallback? onTap;
   final Widget child;
+  final double? radius;
 
   @override
   Widget build(BuildContext context) {
@@ -29,14 +31,14 @@ class AppElevatedButton extends StatelessWidget {
     return Container(
       height: 32.w,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(radius ?? 16.r),
         color: Colors.black87,
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(radius ?? 16.r),
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 12.w),
             child: Center(child: text),

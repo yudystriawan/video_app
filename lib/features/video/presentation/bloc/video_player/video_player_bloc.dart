@@ -36,7 +36,7 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
   Future<void> close() async {
     controller?.removeListener(setupListener);
 
-    _resetValue();
+    await _resetValue();
     return super.close();
   }
 

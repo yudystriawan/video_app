@@ -2,6 +2,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:video_app/features/video/presentation/widgets/video_suggestions_category_widget.dart';
 
 import '../../../../core/utils/util.dart';
 import '../../../../shared/widgets/circle_container.dart';
@@ -142,12 +143,8 @@ class _ExpandedPlayerWidgetState extends State<ExpandedPlayerWidget> {
                               visible: innerBoxIsScrolled,
                               sliver: SliverPersistentHeader(
                                 delegate: MyDelegate(
-                                  child: Container(
-                                    height: 48.w,
-                                    color: Colors.grey,
-                                    child: const SizedBox(),
-                                  ),
-                                ),
+                                    child:
+                                        const VideoSuggestionsCategoryWidget()),
                                 pinned: true,
                               ),
                             ),
