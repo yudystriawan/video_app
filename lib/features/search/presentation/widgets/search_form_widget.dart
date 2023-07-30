@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:video_app/routes/router.dart';
 
+import '../../../../routes/router.dart';
 import '../../../../shared/widgets/icon.dart';
 import '../bloc/search/search_bloc.dart';
 

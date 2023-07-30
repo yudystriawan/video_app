@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:video_app/shared/widgets/icon.dart';
+import '../../../../shared/widgets/icon.dart';
 
 import '../../domain/enitities/video.dart';
 import '../bloc/mini_player/mini_player_bloc.dart';

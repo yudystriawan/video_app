@@ -2,9 +2,10 @@ import 'dart:developer';
 
 import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
-import 'package:video_app/core/errors/failures.dart';
-import 'package:video_app/features/search/data/datasources/hive/query_model.dart';
-import 'package:video_app/features/search/data/datasources/search_local_data_source.dart';
+
+import '../../../../../core/errors/failures.dart';
+import '../search_local_data_source.dart';
+import 'query_model.dart';
 
 @Injectable(as: SearchLocalDataSource)
 class SearchLocalDataSourceImpl implements SearchLocalDataSource {

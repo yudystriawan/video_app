@@ -1,13 +1,20 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/utils/util.dart';
+import '../../../../shared/widgets/circle_container.dart';
+import '../../../../shared/widgets/elevated_button.dart';
 import '../bloc/mini_player/mini_player_bloc.dart';
 import '../bloc/video_player/video_player_bloc.dart';
+import 'recommended_video_list_widget.dart';
+import 'video_comment_widget.dart';
+import 'video_functions_widget.dart';
 import 'video_screen.dart';
+import 'video_suggestions_category_widget.dart';
 
-class ExpandedPlayerWidget extends StatelessWidget {
+class ExpandedPlayerWidget extends StatefulWidget {
   const ExpandedPlayerWidget({
     Key? key,
     required this.height,
@@ -20,6 +27,13 @@ class ExpandedPlayerWidget extends StatelessWidget {
   final ChewieController? controller;
 
   @override
+  State<ExpandedPlayerWidget> createState() => _ExpandedPlayerWidgetState();
+}
+
+class _ExpandedPlayerWidgetState extends State<ExpandedPlayerWidget> {
+  final _innerController = ScrollController();
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
       builder: (context, state) {
@@ -29,15 +43,15 @@ class ExpandedPlayerWidget extends StatelessWidget {
           min: state.playerMaxHeight * miniplayerPercentageDeclaration +
               state.playerMinHeight,
           max: state.playerMaxHeight,
-          value: height,
+          value: widget.height,
         );
-        if (percentageExpandedPlayer < 0) percentageExpandedPlayer = 0;
-        final paddingVertical = valueFromPercentageInRange(
-            min: 0, max: 10, percentage: percentageExpandedPlayer);
-        final double heightWithoutPadding = height - paddingVertical * 2;
-        final double playerheight = heightWithoutPadding > maxPlayerSize
-            ? maxPlayerSize
-            : heightWithoutPadding;
+
+        if (percentageExpandedPlayer < 0 || percentageExpandedPlayer.isNaN) {
+          percentageExpandedPlayer = 0;
+        }
+
+        final double playerheight =
+            percentageExpandedPlayer > 0 ? 210.w : widget.maxPlayerSize;
 
         return SafeArea(
           child: Column(
@@ -47,25 +61,100 @@ class ExpandedPlayerWidget extends StatelessWidget {
                 child: VideoScreen(
                   width: width,
                   height: playerheight,
-                  controller: controller,
+                  controller: widget.controller,
                 ),
               ),
               BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
                 buildWhen: (p, c) => p.currentVideo != c.currentVideo,
                 builder: (context, state) {
+                  final currentVideo = state.currentVideo;
+
                   return Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 33),
-                      child: Opacity(
-                        opacity: percentageExpandedPlayer,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Flexible(
-                              child: Text(state.currentVideo?.title ?? '-'),
+                    child: Opacity(
+                      opacity: percentageExpandedPlayer,
+                      child: NestedScrollView(
+                        controller: _innerController,
+                        physics: const NeverScrollableScrollPhysics(),
+                        headerSliverBuilder: (context, innerBoxIsScrolled) {
+                          debugPrint('isScrolled: $innerBoxIsScrolled');
+                          return [
+                            SliverToBoxAdapter(
+                              child: Column(
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    padding: EdgeInsets.all(12.w)
+                                        .copyWith(bottom: 8.w),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          currentVideo?.title ?? '',
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(
+                                          height: 8.w,
+                                        ),
+                                        const Text('999K Views 3d ago ')
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 48.w,
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 8.w,
+                                      horizontal: 12.w,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        CircleContainer(size: 32.w),
+                                        SizedBox(
+                                          width: 12.w,
+                                        ),
+                                        Expanded(
+                                          child: Row(
+                                            children: [
+                                              const Text(
+                                                'Channel name',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              SizedBox(
+                                                width: 8.w,
+                                              ),
+                                              const Text('7.05K'),
+                                            ],
+                                          ),
+                                        ),
+                                        AppElevatedButton(
+                                          child: const Text('Subscribe'),
+                                          onTap: () {},
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const VideoFunctionsWidget(),
+                                  const VideoCommentWidget(),
+                                  SizedBox(
+                                    height: 24.w,
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
+                            SliverVisibility(
+                              visible: innerBoxIsScrolled,
+                              sliver: SliverPersistentHeader(
+                                delegate: MyDelegate(
+                                    child:
+                                        const VideoSuggestionsCategoryWidget()),
+                                pinned: true,
+                              ),
+                            ),
+                          ];
+                        },
+                        body: const RecommendedVideoListWidget(),
                       ),
                     ),
                   );
@@ -76,5 +165,33 @@ class ExpandedPlayerWidget extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class MyDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+
+  MyDelegate({
+    required this.child,
+  });
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return child;
+  }
+
+  @override
+  double get maxExtent => 48.w;
+
+  @override
+  double get minExtent => 48.w;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
+    return false;
   }
 }

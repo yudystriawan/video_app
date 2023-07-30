@@ -2,10 +2,11 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
 import 'package:kt_dart/collection.dart';
-import 'package:video_app/core/errors/failures.dart';
-import 'package:video_app/core/usecases/usecase.dart';
-import 'package:video_app/features/search/domain/entities/query.dart';
-import 'package:video_app/features/search/domain/repositories/search_repository.dart';
+
+import '../../../../core/errors/failures.dart';
+import '../../../../core/usecases/usecase.dart';
+import '../entities/query.dart';
+import '../repositories/search_repository.dart';
 
 class GetSearchParams extends Equatable {
   final String? keyword;

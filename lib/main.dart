@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:video_app/features/search/data/datasources/hive/query_model.dart';
+import 'features/search/data/datasources/hive/query_model.dart';
+import 'home_page.dart';
 
 import 'core/utils/bloc_observer.dart';
 import 'features/video/presentation/bloc/mini_player/mini_player_bloc.dart';
@@ -31,6 +32,8 @@ void registerTypeAdapters() {
   Hive.registerAdapter(QueryModelAdapter());
 }
 
+final appRouter = AppRouter();
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -39,8 +42,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _appRouter = AppRouter();
-
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -53,11 +54,11 @@ class _MyAppState extends State<MyApp> {
         ),
       ],
       child: ScreenUtilInit(
-        designSize: const Size(360, 800),
+        designSize: const Size(375, 812),
         minTextAdapt: true,
         builder: (context, child) {
           return MaterialApp.router(
-            routerConfig: _appRouter.config(),
+            routerConfig: appRouter.config(),
             title: 'Video App Demo',
             theme: ThemeData(
               primarySwatch: Colors.blue,
@@ -66,8 +67,11 @@ class _MyAppState extends State<MyApp> {
               final height = MediaQuery.of(context).size.height;
               context
                   .read<MiniPlayerBloc>()
-                  .add(MiniPlayerEvent.initialized(min: 72, max: height));
-              return child!;
+                  .add(MiniPlayerEvent.initialized(min: 76.w, max: height));
+
+              return HomePage(
+                child: child,
+              );
             },
           );
         },

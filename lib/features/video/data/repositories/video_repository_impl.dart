@@ -27,4 +27,20 @@ class VideoRepositoryImpl implements VideoRepository {
       return left(const Failure.unexpectedError());
     }
   }
+
+  @override
+  Future<Either<Failure, KtList<Video>>> getRecommendedVideos(
+      String videoId) async {
+    try {
+      final result = await _dataSource.getRecommendedVideos(videoId);
+
+      final videos = result?.map((e) => e.toDomain()).toImmutableList();
+
+      return right(videos ?? const KtList.empty());
+    } on Failure catch (e) {
+      return left(e);
+    } catch (e) {
+      return left(const Failure.unexpectedError());
+    }
+  }
 }

@@ -1,12 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:video_app/features/search/presentation/widgets/list_history_widget.dart';
-import 'package:video_app/injection.dart';
 
+import '../../../../injection.dart';
 import '../../../../routes/router.dart';
 import '../../../../shared/widgets/search_bar.dart';
 import '../bloc/search/search_bloc.dart';
+import '../widgets/list_history_widget.dart';
 
 @RoutePage()
 class SearchPage extends StatelessWidget implements AutoRouteWrapper {

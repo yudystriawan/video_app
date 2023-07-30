@@ -29,7 +29,7 @@ class VideoLoaderBloc extends Bloc<VideoLoaderEvent, VideoLoaderState> {
   ) async {
     emit(const VideoLoaderState.loadInProgress());
 
-    final failureOrVideos = await _getVideos(Params(event.query));
+    final failureOrVideos = await _getVideos(GetVideosParams(event.query));
 
     emit(failureOrVideos.fold(
       (f) => VideoLoaderState.loadFailure(f),

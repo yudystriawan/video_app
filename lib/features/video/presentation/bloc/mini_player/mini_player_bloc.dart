@@ -24,12 +24,15 @@ class MiniPlayerBloc extends Bloc<MiniPlayerEvent, MiniPlayerState> {
     _Initialized event,
     Emitter<MiniPlayerState> emit,
   ) async {
-    playerExpandProgress.value = event.min;
+    if (event.min != state.playerMinHeight &&
+        event.max != state.playerMaxHeight) {
+      playerExpandProgress.value = event.min;
 
-    emit(state.copyWith(
-      playerMinHeight: event.min,
-      playerMaxHeight: event.max,
-    ));
+      emit(state.copyWith(
+        playerMinHeight: event.min,
+        playerMaxHeight: event.max,
+      ));
+    }
   }
 
   void _onExpanded(

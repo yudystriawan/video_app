@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:chewie/chewie.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:video_player/video_player.dart';
 
@@ -34,14 +35,16 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
 
   @override
   Future<void> close() async {
+    debugPrint('closed');
     controller?.removeListener(setupListener);
 
-    _resetValue();
+    await _resetValue();
     return super.close();
   }
 
   Future<void> _resetValue() async {
     await controller?.pause();
+    await _videoPlayerController?.pause();
     await _videoPlayerController?.dispose();
     controller?.dispose();
 
@@ -107,9 +110,9 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
         }
 
         controller!.addListener(setupListener);
-      } catch (e) {
-        emit(state.copyWith(currentVideo: null));
-        log('error occured', error: e);
+      } catch (e, s) {
+        // emit(state.copyWith(currentVideo: null));
+        log('_onPlayed', error: e, stackTrace: s);
       }
       return;
     }
@@ -138,9 +141,9 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     _Stopped event,
     Emitter<VideoPlayerState> emit,
   ) async {
-    if (controller != null) {
-      await _resetValue();
+    await _resetValue();
 
+    if (controller != null) {
       emit(state.copyWith(
         currentVideo: null,
       ));

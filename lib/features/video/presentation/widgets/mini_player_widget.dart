@@ -1,6 +1,7 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../../core/utils/util.dart';
@@ -58,7 +59,7 @@ class MiniPlayerWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 10),
+                          padding: EdgeInsets.only(left: 10.w),
                           child: Opacity(
                             opacity: elementOpacity,
                             child: Column(
@@ -86,7 +87,7 @@ class MiniPlayerWidget extends StatelessWidget {
                             final isPlaying = value.isPlaying;
 
                             return Padding(
-                              padding: const EdgeInsets.only(right: 3),
+                              padding: EdgeInsets.only(right: 3.w),
                               child: Opacity(
                                 opacity: elementOpacity,
                                 child: IconButton(
@@ -114,7 +115,7 @@ class MiniPlayerWidget extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  height: progressIndicatorHeight,
+                  height: progressIndicatorHeight.w,
                   child: Opacity(
                     opacity: elementOpacity,
                     child: videoPlayerController != null
