@@ -2,6 +2,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:video_app/features/video/presentation/widgets/recommended_video_list_widget.dart';
 import 'package:video_app/features/video/presentation/widgets/video_comment_widget.dart';
 import 'package:video_app/features/video/presentation/widgets/video_functions_widget.dart';
 import 'package:video_app/shared/widgets/category_button.dart';
@@ -119,6 +120,10 @@ class ExpandedPlayerWidget extends StatelessWidget {
                             ),
                             const VideoFunctionsWidget(),
                             const VideoCommentWidget(),
+                            SizedBox(
+                              height: 24.w,
+                            ),
+                            const RecommendedVideoListWidget(),
                           ],
                         ),
                       ),

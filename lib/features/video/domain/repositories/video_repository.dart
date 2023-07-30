@@ -6,4 +6,5 @@ import '../enitities/video.dart';
 
 abstract class VideoRepository {
   Future<Either<Failure, KtList<Video>>> getVideos({String? query});
+  Future<Either<Failure, KtList<Video>>> getRecommendedVideos(String videoId);
 }

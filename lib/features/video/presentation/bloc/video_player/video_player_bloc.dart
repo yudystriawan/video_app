@@ -107,9 +107,9 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
         }
 
         controller!.addListener(setupListener);
-      } catch (e) {
+      } catch (e, s) {
         // emit(state.copyWith(currentVideo: null));
-        log('_onPlayed', error: e);
+        log('_onPlayed', error: e, stackTrace: s);
       }
       return;
     }

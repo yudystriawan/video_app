@@ -109,9 +109,13 @@ class VideoOverviewPage extends StatelessWidget implements AutoRouteWrapper {
 
   @override
   Widget wrappedRoute(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt<VideoLoaderBloc>()
-        ..add(VideoLoaderEvent.fetched(query: initialKeyword)),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => getIt<VideoLoaderBloc>()
+            ..add(VideoLoaderEvent.fetched(query: initialKeyword)),
+        ),
+      ],
       child: this,
     );
   }
