@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:video_app/shared/widgets/circle_container.dart';
-import 'package:video_app/shared/widgets/icon.dart';
+import '../../../../shared/widgets/circle_container.dart';
+import '../../../../shared/widgets/icon.dart';
 
 class VideoCommentWidget extends StatelessWidget {
   const VideoCommentWidget({super.key});

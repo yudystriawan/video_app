@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:video_app/features/search/domain/entities/query.dart';
+import '../../domain/entities/query.dart';
 
 part 'query_dto.freezed.dart';
 part 'query_dto.g.dart';

@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:kt_dart/collection.dart';
-import 'package:video_app/core/errors/failures.dart';
-import 'package:video_app/features/search/data/datasources/search_local_data_source.dart';
-import 'package:video_app/features/search/domain/entities/query.dart';
+import '../../../../core/errors/failures.dart';
+import '../datasources/search_local_data_source.dart';
+import '../../domain/entities/query.dart';
 
 import '../../domain/repositories/search_repository.dart';
 
