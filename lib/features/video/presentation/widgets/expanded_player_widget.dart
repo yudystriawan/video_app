@@ -45,7 +45,11 @@ class _ExpandedPlayerWidgetState extends State<ExpandedPlayerWidget> {
           max: state.playerMaxHeight,
           value: widget.height,
         );
-        if (percentageExpandedPlayer < 0) percentageExpandedPlayer = 0;
+
+        if (percentageExpandedPlayer < 0 || percentageExpandedPlayer.isNaN) {
+          percentageExpandedPlayer = 0;
+        }
+
         final double playerheight =
             percentageExpandedPlayer > 0 ? 210.w : widget.maxPlayerSize;
 
