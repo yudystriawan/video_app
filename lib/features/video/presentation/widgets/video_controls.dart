@@ -168,7 +168,9 @@ class _VideoControlsState extends State<VideoControls> {
                   children: [
                     const VideoDurationWidget(),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () => context
+                          .read<VideoPlayerBloc>()
+                          .add(const VideoPlayerEvent.fullscreenToggled()),
                       child: const Icon(
                         Icons.fullscreen,
                         color: Colors.white,
