@@ -1,11 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:kt_dart/collection.dart';
-import '../../../../core/errors/failures.dart';
-import '../datasources/search_local_data_source.dart';
-import '../../domain/entities/query.dart';
 
+import '../../../../core/errors/failures.dart';
+import '../../domain/entities/query.dart';
 import '../../domain/repositories/search_repository.dart';
+import '../datasources/search_local_data_source.dart';
 
 @Injectable(as: SearchRepository)
 class SearchRepositoryImpl implements SearchRepository {
