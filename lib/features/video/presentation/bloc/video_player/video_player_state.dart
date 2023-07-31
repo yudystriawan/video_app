@@ -4,14 +4,24 @@ part of 'video_player_bloc.dart';
 class VideoPlayerState with _$VideoPlayerState {
   const VideoPlayerState._();
   const factory VideoPlayerState({
-    Video? currentVideo,
+    @Default(0) currentIndex,
+    required KtList<Video> videoQueue,
     @Default(VideoStatus.initial) VideoStatus status,
   }) = _VideoPlayerState;
 
   bool get isLoading => status == VideoStatus.loading;
   bool get isPlaying => status == VideoStatus.play;
 
-  factory VideoPlayerState.initial() => const VideoPlayerState();
+  bool get hasNextQueue => currentIndex < videoQueue.lastIndex;
+  bool get hasPreviousQueue => currentIndex > 0;
+
+  Video? get currentVideo {
+    if (videoQueue.isEmpty()) return null;
+    return videoQueue[currentIndex];
+  }
+
+  factory VideoPlayerState.initial() =>
+      const VideoPlayerState(videoQueue: KtList.empty());
 }
 
 enum VideoStatus {

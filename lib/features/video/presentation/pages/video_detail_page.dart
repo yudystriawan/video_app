@@ -25,7 +25,7 @@ class VideoDetailPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => getIt<RecommendedVideoLoaderBloc>(),
       child: BlocListener<VideoPlayerBloc, VideoPlayerState>(
-        listenWhen: (p, c) => p.currentVideo != c.currentVideo,
+        listenWhen: (p, c) => p.videoQueue != c.videoQueue,
         listener: (context, state) {
           // get recommended videos
           final currentVideo = state.currentVideo;
@@ -36,10 +36,10 @@ class VideoDetailPage extends StatelessWidget {
           }
         },
         child: BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
-          buildWhen: (p, c) => p.currentVideo != c.currentVideo,
+          buildWhen: (p, c) => p.videoQueue != c.videoQueue,
           builder: (context, state) {
             return Offstage(
-              offstage: state.currentVideo == null,
+              offstage: state.videoQueue.isEmpty(),
               child: BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
                 builder: (context, state) {
                   return Miniplayer(

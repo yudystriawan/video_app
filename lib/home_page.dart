@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'main.dart';
-import 'routes/router.dart';
-import 'shared/widgets/bottom_navigation_bar.dart';
-import 'shared/widgets/icon.dart';
+import 'package:kt_dart/collection.dart';
 
 import 'core/utils/util.dart';
 import 'features/video/presentation/bloc/mini_player/mini_player_bloc.dart';
 import 'features/video/presentation/bloc/video_player/video_player_bloc.dart';
 import 'features/video/presentation/pages/video_detail_page.dart';
+import 'main.dart';
+import 'routes/router.dart';
+import 'shared/widgets/bottom_navigation_bar.dart';
+import 'shared/widgets/icon.dart';
 
 @RoutePage()
 class HomePage extends HookWidget {
@@ -33,17 +34,15 @@ class HomePage extends HookWidget {
     return Scaffold(
       body: SafeArea(
         child: BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
-          buildWhen: (p, c) => p.currentVideo != c.currentVideo,
+          buildWhen: (p, c) => p.videoQueue != c.videoQueue,
           builder: (context, state) {
-            final currentVideo = state.currentVideo;
-
             return Stack(
               children: [
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Expanded(child: child!),
-                    if (currentVideo != null)
+                    if (state.videoQueue.isNotEmpty())
                       BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
                         builder: (context, state) {
                           return SizedBox(

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'features/search/data/datasources/hive/query_model.dart';
-import 'home_page.dart';
 
 import 'core/utils/bloc_observer.dart';
+import 'features/search/data/datasources/hive/query_model.dart';
 import 'features/video/presentation/bloc/mini_player/mini_player_bloc.dart';
 import 'features/video/presentation/bloc/video_player/video_player_bloc.dart';
+import 'home_page.dart';
 import 'injection.dart';
 import 'routes/router.dart';
 
@@ -47,7 +47,7 @@ class _MyAppState extends State<MyApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => VideoPlayerBloc(),
+          create: (context) => getIt<VideoPlayerBloc>(),
         ),
         BlocProvider(
           create: (context) => MiniPlayerBloc(),
