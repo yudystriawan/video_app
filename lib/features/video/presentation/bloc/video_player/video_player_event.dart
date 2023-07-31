@@ -12,4 +12,5 @@ class VideoPlayerEvent with _$VideoPlayerEvent {
   const factory VideoPlayerEvent.skippedBackward() = _SkippedBackward;
   const factory VideoPlayerEvent.nextQueue() = _NextQueue;
   const factory VideoPlayerEvent.previousQueue() = _PreviousQueue;
+  const factory VideoPlayerEvent.fullscreenToggled() = _FullscreenToggled;
 }

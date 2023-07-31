@@ -5,6 +5,7 @@ class VideoPlayerState with _$VideoPlayerState {
   const VideoPlayerState._();
   const factory VideoPlayerState({
     @Default(0) currentIndex,
+    @Default(false) bool isFullscreen,
     required KtList<Video> videoQueue,
     @Default(VideoStatus.initial) VideoStatus status,
   }) = _VideoPlayerState;
