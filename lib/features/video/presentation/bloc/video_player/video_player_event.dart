@@ -10,4 +10,6 @@ class VideoPlayerEvent with _$VideoPlayerEvent {
   const factory VideoPlayerEvent.sought(Duration position) = _Sought;
   const factory VideoPlayerEvent.skippedForward() = _SkippedForward;
   const factory VideoPlayerEvent.skippedBackward() = _SkippedBackward;
+  const factory VideoPlayerEvent.nextQueue() = _NextQueue;
+  const factory VideoPlayerEvent.previousQueue() = _PreviousQueue;
 }

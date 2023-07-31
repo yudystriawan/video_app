@@ -93,46 +93,65 @@ class _VideoControlsState extends State<VideoControls> {
 
                             return SizedBox(
                               width: MediaQuery.of(context).size.width / 2,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  RoundContainer(
-                                    onTap: () {},
-                                    child: Icon(
-                                      Icons.skip_previous_sharp,
-                                      size: _iconSize,
-                                    ),
-                                  ),
-                                  RoundContainer(
-                                    child: Icon(
-                                      isFinished
-                                          ? Icons.replay
-                                          : isPlaying
-                                              ? Icons.pause
-                                              : Icons.play_arrow,
-                                      size: _iconSize + (_iconSize * .3),
-                                    ),
-                                    onTap: () {
-                                      if (isPlaying) {
-                                        context.read<VideoPlayerBloc>().add(
-                                            const VideoPlayerEvent.paused());
-                                        return;
-                                      }
+                              child: BlocBuilder<VideoPlayerBloc,
+                                  VideoPlayerState>(
+                                buildWhen: (p, c) =>
+                                    p.currentIndex != c.currentIndex,
+                                builder: (context, state) {
+                                  return Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      RoundContainer(
+                                        onTap: state.hasPreviousQueue
+                                            ? () => context
+                                                .read<VideoPlayerBloc>()
+                                                .add(const VideoPlayerEvent
+                                                    .previousQueue())
+                                            : null,
+                                        child: Icon(
+                                          Icons.skip_previous_sharp,
+                                          size: _iconSize,
+                                          color: state.hasPreviousQueue
+                                              ? null
+                                              : Colors.black54,
+                                        ),
+                                      ),
+                                      RoundContainer(
+                                        child: Icon(
+                                          isFinished
+                                              ? Icons.replay
+                                              : isPlaying
+                                                  ? Icons.pause
+                                                  : Icons.play_arrow,
+                                          size: _iconSize + (_iconSize * .3),
+                                        ),
+                                        onTap: () {
+                                          if (isPlaying) {
+                                            context.read<VideoPlayerBloc>().add(
+                                                const VideoPlayerEvent
+                                                    .paused());
+                                            return;
+                                          }
 
-                                      context.read<VideoPlayerBloc>().add(
-                                          const VideoPlayerEvent.resumed());
-                                    },
-                                  ),
-                                  RoundContainer(
-                                    onTap: () {},
-                                    child: Icon(
-                                      Icons.skip_next_sharp,
-                                      size: _iconSize,
-                                    ),
-                                  ),
-                                ],
+                                          context.read<VideoPlayerBloc>().add(
+                                              const VideoPlayerEvent.resumed());
+                                        },
+                                      ),
+                                      RoundContainer(
+                                        onTap: () => context
+                                            .read<VideoPlayerBloc>()
+                                            .add(const VideoPlayerEvent
+                                                .nextQueue()),
+                                        child: Icon(
+                                          Icons.skip_next_sharp,
+                                          size: _iconSize,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
                               ),
                             );
                           },

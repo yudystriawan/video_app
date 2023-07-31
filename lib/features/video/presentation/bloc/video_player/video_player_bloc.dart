@@ -6,6 +6,9 @@ import 'package:bloc/bloc.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
+import 'package:kt_dart/collection.dart';
+import 'package:video_app/features/video/domain/usecases/get_recommended_videos.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../domain/enitities/video.dart';
@@ -15,14 +18,18 @@ part 'video_player_bloc.freezed.dart';
 part 'video_player_event.dart';
 part 'video_player_state.dart';
 
+@injectable
 class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
-  VideoPlayerController? _videoPlayerController;
+  final List<VideoPlayerController> _videoPlayerControllers = [];
   ChewieController? controller;
 
   Duration pauseTime = Duration.zero;
   bool _isPLaying = false;
 
-  VideoPlayerBloc() : super(VideoPlayerState.initial()) {
+  final GetRecommendedVideos _getRecommendedVideos;
+
+  VideoPlayerBloc(this._getRecommendedVideos)
+      : super(VideoPlayerState.initial()) {
     on<_Played>(_onPlayed);
     on<_Stopped>(_onStopped);
     on<_Paused>(_onPaused);
@@ -31,6 +38,8 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     on<_Sought>(_onSought);
     on<_SkippedForward>(_onSkippedForward);
     on<_SkippedBackward>(_onSkippedBackward);
+    on<_NextQueue>(_onNextQueue);
+    on<_PreviousQueue>(_onPreviousQueue);
   }
 
   @override
@@ -44,8 +53,13 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
 
   Future<void> _resetValue() async {
     await controller?.pause();
-    await _videoPlayerController?.pause();
-    await _videoPlayerController?.dispose();
+
+    for (var controller in _videoPlayerControllers) {
+      await controller.pause();
+      await controller.dispose();
+    }
+
+    _videoPlayerControllers.clear();
     controller?.dispose();
 
     controller = null;
@@ -79,7 +93,6 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     _Played event,
     Emitter<VideoPlayerState> emit,
   ) async {
-    // check if selected video different from current video
     final selectedVideo = event.video!;
     final currentVideo = state.currentVideo;
     final isPlaying = controller?.isPlaying ?? false;
@@ -88,21 +101,32 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     if (controller == null || (selectedVideo != currentVideo)) {
       emit(state.copyWith(status: VideoStatus.loading));
 
+      // reset queue
       if (isPlaying) await _resetValue();
 
       try {
-        emit(state.copyWith(currentVideo: selectedVideo));
+        emit(state.copyWith(
+          videoQueue: KtList.from([selectedVideo]),
+          currentIndex: 0,
+        ));
 
-        _videoPlayerController =
+        // initialize video
+        final videoPlayerController =
             VideoPlayerController.network(selectedVideo.sources.first);
-        await _videoPlayerController!.initialize();
-        await _videoPlayerController!.play();
+        await videoPlayerController.initialize();
+        await videoPlayerController.play();
+
         controller = ChewieController(
-          videoPlayerController: _videoPlayerController!,
+          videoPlayerController: videoPlayerController,
           customControls: const VideoControls(),
         );
 
-        emit(state.copyWith(status: VideoStatus.play));
+        // add current play video controller
+        _videoPlayerControllers.add(videoPlayerController);
+
+        emit(state.copyWith(
+          status: VideoStatus.play,
+        ));
 
         // add listener
         if (controller!.hasListeners) {
@@ -120,9 +144,6 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     // resume video
     if (!isPlaying) {
       await _resumeVideo();
-      emit(state.copyWith(
-        currentVideo: selectedVideo,
-      ));
     }
   }
 
@@ -141,11 +162,10 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     _Stopped event,
     Emitter<VideoPlayerState> emit,
   ) async {
-    await _resetValue();
-
     if (controller != null) {
+      await _resetValue();
       emit(state.copyWith(
-        currentVideo: null,
+        videoQueue: const KtList.empty(),
       ));
     }
   }
@@ -199,6 +219,83 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
       final currentPosition =
           controller!.videoPlayerController.value.position.inSeconds;
       controller!.seekTo(Duration(seconds: currentPosition - skipValue));
+    }
+  }
+
+  void _onNextQueue(
+    _NextQueue event,
+    Emitter<VideoPlayerState> emit,
+  ) async {
+    int currentIndex = state.currentIndex;
+    final queue = state.videoQueue.toMutableList();
+    final currentVideo = queue[currentIndex];
+
+    // check if has queue
+    if (currentIndex < queue.lastIndex) {
+      currentIndex++;
+
+      final nextVideo = queue[currentIndex];
+
+      // initialized new video controller
+      controller?.pause();
+      final videoPlayerController =
+          VideoPlayerController.network(nextVideo.sources.first);
+      await videoPlayerController.initialize();
+      await videoPlayerController.play();
+
+      controller = ChewieController(
+        videoPlayerController: videoPlayerController,
+        customControls: const VideoControls(),
+        autoPlay: true,
+      );
+
+      emit(state.copyWith(currentIndex: currentIndex));
+    } else {
+      // get more queue video
+      final faiureOrVideos =
+          await _getRecommendedVideos(const GetRecommendedVideosParams('1'));
+
+      emit(faiureOrVideos.fold(
+        (f) => state,
+        (videos) {
+          queue.addAll(videos);
+          return state.copyWith(
+            videoQueue: queue,
+          );
+        },
+      ));
+
+      add(const VideoPlayerEvent.nextQueue());
+    }
+  }
+
+  void _onPreviousQueue(
+    _PreviousQueue event,
+    Emitter<VideoPlayerState> emit,
+  ) async {
+    int currentIndex = state.currentIndex;
+    final queue = state.videoQueue;
+
+    // check if has queue
+    if (currentIndex > 0) {
+      currentIndex--;
+
+      final previousVideo = queue[currentIndex];
+
+      // initialized new video controller
+      controller?.pause();
+      final videoPlayerController =
+          VideoPlayerController.network(previousVideo.sources.first);
+      await videoPlayerController.initialize();
+      await videoPlayerController.play();
+
+      controller = ChewieController(
+        videoPlayerController: videoPlayerController,
+        customControls: const VideoControls(),
+        autoPlay: true,
+      );
+
+      emit(state.copyWith(currentIndex: currentIndex));
     }
   }
 }
