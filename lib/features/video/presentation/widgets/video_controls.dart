@@ -27,6 +27,7 @@ class _VideoControlsState extends State<VideoControls> {
   @override
   void initState() {
     super.initState();
+
     _controller = context.read<VideoPlayerBloc>().controller;
     _initialized();
   }
@@ -70,6 +71,9 @@ class _VideoControlsState extends State<VideoControls> {
 
   @override
   Widget build(BuildContext context) {
+    final orientation = MediaQuery.of(context).orientation;
+    final isLandscape = orientation == Orientation.landscape;
+
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -182,12 +186,15 @@ class _VideoControlsState extends State<VideoControls> {
             ],
           ),
         ),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: VideoProgressSlider(
-            showControll: _isVisible,
+        Visibility(
+          visible: isLandscape ? _isVisible : true,
+          child: Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: VideoProgressSlider(
+              showControll: _isVisible,
+            ),
           ),
         ),
       ],
