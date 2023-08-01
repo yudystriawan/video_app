@@ -20,10 +20,23 @@ class _VideoFullScreenPageState extends State<VideoFullScreenPage> {
   @override
   void initState() {
     super.initState();
+    // Hide the status bar when this page is displayed
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+  }
+
+  @override
+  void dispose() {
+    // Show the status bar again when the user leaves this page
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: SystemUiOverlay.values,
+    );
+    super.dispose();
   }
 
   @override
