@@ -42,6 +42,8 @@ class VideoDetailPage extends StatelessWidget {
               offstage: state.videoQueue.isEmpty(),
               child: BlocBuilder<MiniPlayerBloc, MiniPlayerState>(
                 builder: (context, state) {
+                  double maxPlayerHeight = 210.w;
+
                   return Miniplayer(
                     valueNotifier:
                         context.watch<MiniPlayerBloc>().playerExpandProgress,
@@ -49,9 +51,9 @@ class VideoDetailPage extends StatelessWidget {
                     minHeight: state.playerMinHeight,
                     maxHeight: state.playerMaxHeight,
                     builder: (height, percentage) {
-                      final isMiniplayer =
-                          percentage < miniplayerPercentageDeclaration;
-                      final width = 129.w;
+                      final isMiniplayer = height < maxPlayerHeight;
+
+                      final maxMiniPlayerWidth = 129.w;
 
                       if (!isMiniplayer) {
                         return GestureDetector(
@@ -62,15 +64,16 @@ class VideoDetailPage extends StatelessWidget {
                           },
                           child: ExpandedPlayerWidget(
                             height: height,
-                            maxPlayerSize: width,
+                            maxPlayerHeight: maxPlayerHeight,
                             controller:
                                 context.watch<VideoPlayerBloc>().controller,
                           ),
                         );
                       }
+
                       return MiniPlayerWidget(
                         height: height,
-                        maxPlayerSize: width,
+                        maxPlayerWidth: maxMiniPlayerWidth,
                         controller: context
                             .watch<VideoPlayerBloc>()
                             .controller

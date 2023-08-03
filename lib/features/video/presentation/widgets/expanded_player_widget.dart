@@ -18,12 +18,12 @@ class ExpandedPlayerWidget extends StatefulWidget {
   const ExpandedPlayerWidget({
     Key? key,
     required this.height,
-    required this.maxPlayerSize,
+    required this.maxPlayerHeight,
     this.controller,
   }) : super(key: key);
 
   final double height;
-  final double maxPlayerSize;
+  final double maxPlayerHeight;
   final ChewieController? controller;
 
   @override
@@ -39,7 +39,7 @@ class _ExpandedPlayerWidgetState extends State<ExpandedPlayerWidget> {
       builder: (context, state) {
         final width = MediaQuery.of(context).size.width;
 
-        var percentageExpandedPlayer = percentageFromValueInRange(
+        double percentageExpandedPlayer = percentageFromValueInRange(
           min: state.playerMaxHeight * miniplayerPercentageDeclaration +
               state.playerMinHeight,
           max: state.playerMaxHeight,
@@ -50,125 +50,123 @@ class _ExpandedPlayerWidgetState extends State<ExpandedPlayerWidget> {
           percentageExpandedPlayer = 0;
         }
 
-        final double playerheight =
-            percentageExpandedPlayer > 0 ? 210.w : widget.maxPlayerSize;
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            VideoScreen(
+              width: width,
+              height: widget.maxPlayerHeight,
+              controller: widget.controller,
+            ),
+            BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
+              buildWhen: (p, c) => p.currentVideo != c.currentVideo,
+              builder: (context, state) {
+                final currentVideo = state.currentVideo;
 
-        return SafeArea(
-          child: Column(
-            children: [
-              Flexible(
-                flex: 1,
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: VideoScreen(
-                    width: width,
-                    height: playerheight,
-                    controller: widget.controller,
-                  ),
-                ),
-              ),
-              BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
-                buildWhen: (p, c) => p.currentVideo != c.currentVideo,
-                builder: (context, state) {
-                  final currentVideo = state.currentVideo;
-
-                  return Expanded(
-                    flex: 3,
-                    child: Opacity(
-                      opacity: percentageExpandedPlayer,
-                      child: NestedScrollView(
-                        controller: _innerController,
-                        physics: const NeverScrollableScrollPhysics(),
-                        headerSliverBuilder: (context, innerBoxIsScrolled) {
-                          debugPrint('isScrolled: $innerBoxIsScrolled');
-                          return [
-                            SliverToBoxAdapter(
-                              child: Column(
-                                children: [
-                                  Container(
-                                    width: double.infinity,
-                                    padding: EdgeInsets.all(12.w)
-                                        .copyWith(bottom: 8.w),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          currentVideo?.title ?? '',
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        SizedBox(
-                                          height: 8.w,
-                                        ),
-                                        const Text('999K Views 3d ago ')
-                                      ],
-                                    ),
+                return Expanded(
+                  flex: 3,
+                  child: Opacity(
+                    opacity: percentageExpandedPlayer,
+                    child: NestedScrollView(
+                      controller: _innerController,
+                      physics: const NeverScrollableScrollPhysics(),
+                      headerSliverBuilder: (context, innerBoxIsScrolled) {
+                        return [
+                          SliverToBoxAdapter(
+                            child: Column(
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.all(12.w)
+                                      .copyWith(bottom: 8.w),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        currentVideo?.title ?? '',
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      SizedBox(
+                                        height: 8.w,
+                                      ),
+                                      const Text('999K Views 3d ago ')
+                                    ],
                                   ),
-                                  Container(
-                                    height: 48.w,
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: 8.w,
-                                      horizontal: 12.w,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        CircleContainer(size: 32.w),
-                                        SizedBox(
-                                          width: 12.w,
-                                        ),
-                                        Expanded(
-                                          child: Row(
-                                            children: [
-                                              const Text(
-                                                'Channel name',
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                              SizedBox(
-                                                width: 8.w,
-                                              ),
-                                              const Text('7.05K'),
-                                            ],
-                                          ),
-                                        ),
-                                        AppElevatedButton(
-                                          child: const Text('Subscribe'),
-                                          onTap: () {},
-                                        ),
-                                      ],
-                                    ),
+                                ),
+                                Container(
+                                  height: 48.w,
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 8.w,
+                                    horizontal: 12.w,
                                   ),
-                                  const VideoFunctionsWidget(),
-                                  const VideoCommentWidget(),
-                                  SizedBox(
-                                    height: 24.w,
+                                  child: Row(
+                                    children: [
+                                      CircleContainer(size: 32.w),
+                                      SizedBox(
+                                        width: 12.w,
+                                      ),
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            const Text(
+                                              'Channel name',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            SizedBox(
+                                              width: 8.w,
+                                            ),
+                                            const Text('7.05K'),
+                                          ],
+                                        ),
+                                      ),
+                                      AppElevatedButton(
+                                        child: const Text('Subscribe'),
+                                        onTap: () {},
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                                const VideoFunctionsWidget(),
+                                const VideoCommentWidget(),
+                                SizedBox(
+                                  height: 24.w,
+                                ),
+                              ],
                             ),
-                            SliverVisibility(
-                              visible: innerBoxIsScrolled,
-                              sliver: SliverPersistentHeader(
-                                delegate: MyDelegate(
-                                    child:
-                                        const VideoSuggestionsCategoryWidget()),
-                                pinned: true,
-                              ),
+                          ),
+                          SliverVisibility(
+                            visible: innerBoxIsScrolled,
+                            sliver: SliverPersistentHeader(
+                              delegate: MyDelegate(
+                                  child:
+                                      const VideoSuggestionsCategoryWidget()),
+                              pinned: true,
                             ),
-                          ];
-                        },
-                        body: const RecommendedVideoListWidget(),
-                      ),
+                          ),
+                        ];
+                      },
+                      body: const RecommendedVideoListWidget(),
                     ),
-                  );
-                },
-              ),
-            ],
-          ),
+                  ),
+                );
+              },
+            ),
+          ],
         );
       },
     );
+  }
+
+  double _getHeight({
+    required double min,
+    required double max,
+    required double ratio,
+  }) {
+    ratio = 1 - 1 * ratio;
+    return min + (max - min) * ratio;
   }
 }
 

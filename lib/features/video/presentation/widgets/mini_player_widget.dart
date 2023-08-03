@@ -14,12 +14,12 @@ class MiniPlayerWidget extends StatelessWidget {
   const MiniPlayerWidget({
     Key? key,
     required this.height,
-    required this.maxPlayerSize,
+    required this.maxPlayerWidth,
     this.controller,
   }) : super(key: key);
 
   final double height;
-  final double maxPlayerSize;
+  final double maxPlayerWidth;
   final ChewieController? controller;
 
   @override
@@ -44,14 +44,11 @@ class MiniPlayerWidget extends StatelessWidget {
             percentageMiniplayer > 0.9 ? 1 : percentageMiniplayer;
 
         // get width
-        double width =
-            maxPlayerSize + (size.width - maxPlayerSize) * percentageMiniplayer;
+        double width = maxPlayerWidth +
+            (size.width - maxPlayerWidth) * percentageMiniplayer;
         if (percentageMiniplayer > 0.9) {
           width = size.width;
         }
-
-        // get height
-        double playerHeight = height;
 
         final elementOpacity = 1 - 1 * percentageMiniplayer;
         final progressIndicatorHeight = 2.w - 2.w * percentageMiniplayer;
@@ -61,7 +58,6 @@ class MiniPlayerWidget extends StatelessWidget {
           builder: (context, state) {
             final currentVideo = state.currentVideo;
 
-            debugPrint('opacity: $elementOpacity');
             return Column(
               children: [
                 Expanded(
@@ -69,7 +65,7 @@ class MiniPlayerWidget extends StatelessWidget {
                     children: [
                       VideoScreen(
                         width: width,
-                        height: playerHeight,
+                        height: height,
                         showControl: false,
                         controller: controller,
                       ),
