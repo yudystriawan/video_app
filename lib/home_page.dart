@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kt_dart/collection.dart';
+import 'package:video_app/shared/widgets/circle_container.dart';
 
 import 'core/utils/util.dart';
 import 'features/video/presentation/bloc/mini_player/mini_player_bloc.dart';
@@ -13,7 +14,6 @@ import 'features/video/presentation/pages/video_detail_page.dart';
 import 'main.dart';
 import 'routes/router.dart';
 import 'shared/widgets/bottom_navigation_bar.dart';
-import 'shared/widgets/icon.dart';
 
 @RoutePage()
 class HomePage extends HookWidget {
@@ -116,16 +116,38 @@ class HomePage extends HookWidget {
                               offset: Offset(0.0, totalHeight * value * 0.5.w),
                               child: Opacity(
                                 opacity: opacity,
-                                child: const AppBottomNavigationBar(
+                                child: AppBottomNavigationBar(
                                   items: [
-                                    AppNavigationBarItem(
-                                      icon: AppIcon(icon: Icon(Icons.home)),
+                                    const AppNavigationBarItem(
+                                      icon: Icon(Icons.home_outlined),
+                                      activeIcon: Icon(Icons.home),
                                       label: 'Home',
                                     ),
+                                    const AppNavigationBarItem(
+                                      icon: Icon(Icons.shop_two_outlined),
+                                      activeIcon: Icon(Icons.shop_two),
+                                      label: 'Short',
+                                    ),
                                     AppNavigationBarItem(
-                                      icon: AppIcon(
-                                          icon: Icon(
-                                              Icons.video_library_outlined)),
+                                      icon: CircleContainer(
+                                        size: 36.w,
+                                        color: Colors.transparent,
+                                        border: Border.all(
+                                            color: Colors.black, width: 1.w),
+                                        child: Icon(
+                                          Icons.add,
+                                          size: 36.w,
+                                        ),
+                                      ),
+                                    ),
+                                    const AppNavigationBarItem(
+                                      icon: Icon(Icons.subscriptions_outlined),
+                                      activeIcon: Icon(Icons.subscriptions),
+                                      label: 'Subscription',
+                                    ),
+                                    const AppNavigationBarItem(
+                                      icon: Icon(Icons.video_library_outlined),
+                                      activeIcon: Icon(Icons.video_library),
                                       label: 'Library',
                                     ),
                                   ],

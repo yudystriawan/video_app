@@ -5,21 +5,28 @@ class CircleContainer extends StatelessWidget {
     Key? key,
     required this.size,
     this.child,
+    this.color,
+    this.border,
   }) : super(key: key);
 
   final double size;
   final Widget? child;
+  final Color? color;
+  final BoxBorder? border;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: size,
-      height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.grey.shade200,
+        color: color ?? Colors.grey.shade200,
+        border: border,
       ),
-      child: child,
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: child,
+      ),
     );
   }
 }
