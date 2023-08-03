@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../shared/widgets/toast.dart';
+
 class VideoHomeDrawer extends StatelessWidget {
   const VideoHomeDrawer({
     Key? key,
@@ -26,7 +28,11 @@ class VideoHomeDrawer extends StatelessWidget {
               title: const Text('Trending'),
               onTap: () {
                 onMenuTapped.call(() {
-                  debugPrint('trending tapped');
+                  showToast(
+                    context,
+                    title: const Text('trending tapped'),
+                    trailing: const Text('UNDO'),
+                  );
                 });
               },
             ),
@@ -35,7 +41,7 @@ class VideoHomeDrawer extends StatelessWidget {
               title: const Text('Music'),
               onTap: () {
                 onMenuTapped.call(() {
-                  debugPrint('music tapped');
+                  showToast(context, title: const Text('music tapped'));
                 });
               },
             ),
@@ -44,7 +50,7 @@ class VideoHomeDrawer extends StatelessWidget {
               title: const Text('Movies'),
               onTap: () {
                 onMenuTapped.call(() {
-                  debugPrint('movies tapped');
+                  showToast(context, title: const Text('movies tapped'));
                 });
               },
             ),
@@ -53,7 +59,7 @@ class VideoHomeDrawer extends StatelessWidget {
               title: const Text('Gaming'),
               onTap: () {
                 onMenuTapped.call(() {
-                  debugPrint('gaming tapped');
+                  showToast(context, title: const Text('gaming tapped'));
                 });
               },
             ),
@@ -62,7 +68,7 @@ class VideoHomeDrawer extends StatelessWidget {
               title: const Text('News'),
               onTap: () {
                 onMenuTapped.call(() {
-                  debugPrint('news tapped');
+                  showToast(context, title: const Text('news tapped'));
                 });
               },
             ),
@@ -71,7 +77,7 @@ class VideoHomeDrawer extends StatelessWidget {
               title: const Text('Sports'),
               onTap: () {
                 onMenuTapped.call(() {
-                  debugPrint('sports tapped');
+                  showToast(context, title: const Text('sports tapped'));
                 });
               },
             ),
