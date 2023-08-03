@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kt_dart/collection.dart';
-import 'package:video_app/features/bottom_navigation/presentation/widgets/add_video_bottom_sheet.dart';
+import 'package:video_app/shared/add_video_bottom_sheet.dart';
 import 'package:video_app/shared/widgets/circle_container.dart';
 import 'package:video_app/shared/widgets/toast.dart';
 
