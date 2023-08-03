@@ -51,8 +51,7 @@ class VideoDetailPage extends StatelessWidget {
                     builder: (height, percentage) {
                       final isMiniplayer =
                           percentage < miniplayerPercentageDeclaration;
-                      final width = MediaQuery.of(context).size.width;
-                      final maxPlayerSize = width * 0.4.w;
+                      final width = 129.w;
 
                       if (!isMiniplayer) {
                         return GestureDetector(
@@ -63,7 +62,7 @@ class VideoDetailPage extends StatelessWidget {
                           },
                           child: ExpandedPlayerWidget(
                             height: height,
-                            maxPlayerSize: maxPlayerSize,
+                            maxPlayerSize: width,
                             controller:
                                 context.watch<VideoPlayerBloc>().controller,
                           ),
@@ -71,7 +70,7 @@ class VideoDetailPage extends StatelessWidget {
                       }
                       return MiniPlayerWidget(
                         height: height,
-                        maxPlayerSize: maxPlayerSize,
+                        maxPlayerSize: width,
                         controller: context
                             .watch<VideoPlayerBloc>()
                             .controller
