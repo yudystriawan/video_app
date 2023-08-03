@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kt_dart/collection.dart';
 import 'package:video_app/features/bottom_navigation/presentation/widgets/add_video_bottom_sheet.dart';
 import 'package:video_app/shared/widgets/circle_container.dart';
+import 'package:video_app/shared/widgets/toast.dart';
 
 import 'core/utils/util.dart';
 import 'features/video/presentation/bloc/mini_player/mini_player_bloc.dart';
@@ -120,7 +121,14 @@ class HomePage extends StatelessWidget {
                                     child: AppBottomNavigationBar(
                                       onTap: (index) {
                                         if (index == 2) {
-                                          showAddVideoBottomSheet(context);
+                                          showAddVideoBottomSheet(context)
+                                              .then((value) {
+                                            if (value == null) return;
+                                            showToast(
+                                              context,
+                                              title: Text(value),
+                                            );
+                                          });
 
                                           return;
                                         }

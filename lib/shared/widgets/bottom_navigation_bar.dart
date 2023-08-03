@@ -107,7 +107,8 @@ class AppNavigationBarItem extends Equatable {
 
 getHeightBottomNavigationBar(BuildContext context) {
   final bottomHeight = AppBottomNavigationBar.height;
-  final bottomPadding = MediaQuery.of(context).padding.bottom.w;
+  final bottomPadding =
+      MediaQueryData.fromView(View.of(context)).padding.bottom.w;
 
   return bottomPadding + bottomHeight;
 }
