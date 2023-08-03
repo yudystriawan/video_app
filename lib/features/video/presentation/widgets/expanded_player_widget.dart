@@ -56,12 +56,15 @@ class _ExpandedPlayerWidgetState extends State<ExpandedPlayerWidget> {
         return SafeArea(
           child: Column(
             children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: VideoScreen(
-                  width: width,
-                  height: playerheight,
-                  controller: widget.controller,
+              Flexible(
+                flex: 1,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: VideoScreen(
+                    width: width,
+                    height: playerheight,
+                    controller: widget.controller,
+                  ),
                 ),
               ),
               BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
@@ -70,6 +73,7 @@ class _ExpandedPlayerWidgetState extends State<ExpandedPlayerWidget> {
                   final currentVideo = state.currentVideo;
 
                   return Expanded(
+                    flex: 3,
                     child: Opacity(
                       opacity: percentageExpandedPlayer,
                       child: NestedScrollView(

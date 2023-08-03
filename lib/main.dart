@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -12,6 +13,14 @@ import 'injection.dart';
 import 'routes/router.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // set to potrait
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   // initialized local database
   await Hive.initFlutter();
 
@@ -69,8 +78,12 @@ class _MyAppState extends State<MyApp> {
                   .read<MiniPlayerBloc>()
                   .add(MiniPlayerEvent.initialized(min: 76.w, max: height));
 
-              return HomePage(
-                child: child,
+              return OrientationBuilder(
+                builder: (context, orientation) {
+                  return HomePage(
+                    child: child,
+                  );
+                },
               );
             },
           );

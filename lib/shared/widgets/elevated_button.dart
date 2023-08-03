@@ -7,11 +7,13 @@ class AppElevatedButton extends StatelessWidget {
     this.onTap,
     required this.child,
     this.radius,
+    this.padding,
   }) : super(key: key);
 
   final VoidCallback? onTap;
   final Widget child;
   final double? radius;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +42,7 @@ class AppElevatedButton extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(radius ?? 16.r),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 12.w),
+            padding: padding ?? EdgeInsets.symmetric(horizontal: 12.w),
             child: Center(child: text),
           ),
         ),

@@ -1,49 +1,72 @@
-// import 'package:auto_route/auto_route.dart';
-// import 'package:chewie/chewie.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:video_app/features/video/presentation/widgets/video_screen.dart';
 
-// import '../bloc/video_player/video_player_bloc.dart';
-// import '../bloc/video_player/video_player_bloc.dart';
+import '../bloc/video_player/video_player_bloc.dart';
 
-// @RoutePage()
-// class VideoPlayerScreen extends StatefulWidget {
-//   const VideoPlayerScreen({super.key});
+@RoutePage(name: 'VideoFullScreenRoute')
+class VideoFullScreenPage extends StatefulWidget {
+  const VideoFullScreenPage({
+    Key? key,
+  }) : super(key: key);
 
-//   @override
-//   State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
-// }
+  @override
+  State<VideoFullScreenPage> createState() => _VideoFullScreenPageState();
+}
 
-// class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
-//   late VideoPlayerBloc _videoPlayer;
-//   late ChewieController _chewieController;
+class _VideoFullScreenPageState extends State<VideoFullScreenPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Hide the status bar when this page is displayed
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
 
-//   @override
-//   void initState() {
-//     super.initState();
-//     _videoPlayer = context.read<VideoPlayerBloc>();
-//     _chewieController = ChewieController(
-//       videoPlayerController: _videoPlayer.videoPlayerController!,
-//       autoPlay: true,
-//       fullScreenByDefault: true,
-//     );
-//   }
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+  }
 
-//   @override
-//   void dispose() {
-//     _videoPlayer.add(const VideoPlayerEvent.stopped());
-//     super.dispose();
-//   }
+  @override
+  void dispose() {
+    // Show the status bar again when the user leaves this page
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: SystemUiOverlay.values,
+    );
+    super.dispose();
+  }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return WillPopScope(
-//       onWillPop: () async => true,
-//       child: Scaffold(
-//         body: Chewie(
-//           controller: _chewieController,
-//         ),
-//       ),
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    return BlocListener<VideoPlayerBloc, VideoPlayerState>(
+      listenWhen: (p, c) => p.isFullscreen != c.isFullscreen,
+      listener: (context, state) {
+        if (!state.isFullscreen) {
+          SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+          context.router.popForced();
+        }
+      },
+      child: WillPopScope(
+        onWillPop: () async {
+          context
+              .read<VideoPlayerBloc>()
+              .add(const VideoPlayerEvent.fullscreenToggled());
+          return false;
+        },
+        child: Scaffold(
+          extendBodyBehindAppBar: true,
+          body: VideoScreen(
+            controller: context.watch<VideoPlayerBloc>().controller,
+            width: size.width,
+            height: size.height,
+          ),
+        ),
+      ),
+    );
+  }
+}

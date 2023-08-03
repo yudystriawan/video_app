@@ -40,6 +40,7 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     on<_SkippedBackward>(_onSkippedBackward);
     on<_NextQueue>(_onNextQueue);
     on<_PreviousQueue>(_onPreviousQueue);
+    on<_FullscreenToggled>(_oFullscreenToggled);
   }
 
   @override
@@ -296,6 +297,17 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
       );
 
       emit(state.copyWith(currentIndex: currentIndex));
+    }
+  }
+
+  void _oFullscreenToggled(
+    _FullscreenToggled event,
+    Emitter<VideoPlayerState> emit,
+  ) async {
+    final isFullscreen = state.isFullscreen;
+
+    if (controller != null) {
+      emit(state.copyWith(isFullscreen: !isFullscreen));
     }
   }
 }
