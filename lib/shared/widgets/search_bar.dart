@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../features/search/presentation/bloc/search/search_bloc.dart';
 import 'app_bar.dart';
 import 'icon.dart';
 
@@ -31,48 +33,58 @@ class MySearchBar extends HookWidget {
   Widget build(BuildContext context) {
     final controller = useTextEditingController(text: initialText);
 
-    return MyAppBar(
-      title: TextField(
-        controller: controller,
-        autofocus: autoFocus,
-        keyboardType: TextInputType.text,
-        textInputAction: TextInputAction.search,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide.none,
-          ),
-          filled: true,
-          fillColor: Colors.grey.shade200,
-          hintText: 'Search...',
-          hintStyle: const TextStyle(color: Colors.grey),
-          contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
-          constraints: BoxConstraints(
-            maxHeight: 28.w,
-          ),
-          suffixIcon: Builder(
-            builder: (context) {
-              if (controller.text.isEmpty) return const SizedBox();
+    return BlocListener<SearchBloc, SearchState>(
+      listenWhen: (p, c) => p.isEditing != c.isEditing,
+      listener: (context, state) {
+        if (state.isEditing) {
+          controller.text = state.keyword;
+          controller.selection = TextSelection.fromPosition(
+              TextPosition(offset: state.keyword.length));
+        }
+      },
+      child: MyAppBar(
+        title: TextField(
+          controller: controller,
+          autofocus: autoFocus,
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.search,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: BorderSide.none,
+            ),
+            filled: true,
+            fillColor: Colors.grey.shade200,
+            hintText: 'Search...',
+            hintStyle: const TextStyle(color: Colors.grey),
+            contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
+            constraints: BoxConstraints(
+              maxHeight: 28.w,
+            ),
+            suffixIcon: Builder(
+              builder: (context) {
+                if (controller.text.isEmpty) return const SizedBox();
 
-              return AppIcon(
-                icon: const Icon(Icons.close),
-                onTap: () {
-                  controller.clear();
-                  onClear?.call();
-                },
-              );
-            },
+                return AppIcon(
+                  icon: const Icon(Icons.close),
+                  onTap: () {
+                    controller.clear();
+                    onClear?.call();
+                  },
+                );
+              },
+            ),
+            suffixIconColor: Colors.grey,
           ),
-          suffixIconColor: Colors.grey,
+          cursorHeight: 16.w,
+          maxLines: 1,
+          onChanged: onChanged,
+          onSubmitted: onSubmitted,
+          readOnly: readOnly,
+          onTap: onTap,
         ),
-        cursorHeight: 16.w,
-        maxLines: 1,
-        onChanged: onChanged,
-        onSubmitted: onSubmitted,
-        readOnly: readOnly,
-        onTap: onTap,
+        trailing: trailing,
       ),
-      trailing: trailing,
     );
   }
 }

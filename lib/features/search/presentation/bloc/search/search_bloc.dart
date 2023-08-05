@@ -29,6 +29,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     on<_KeywordChanged>(_onKeywordChanged);
     on<_HistoryRemoved>(_onHistoryRemoved);
     on<_Submitted>(_onSubmitted);
+    on<_HistoryUsed>(_onHistoryUsed);
   }
 
   _searchStarted() {
@@ -41,6 +42,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     _Fetched event,
     Emitter<SearchState> emit,
   ) async {
+    emit(state.copyWith(isEditing: false));
+
     final failureOrHistories =
         await _getSearchHistory(GetSearchParams(event.keyword));
     emit(failureOrHistories.fold(
@@ -78,6 +81,17 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     await _removeSearchKeyword(RemoveSearchParams(keyword));
 
     add(const SearchEvent.fetched());
+  }
+
+  void _onHistoryUsed(
+    _HistoryUsed event,
+    Emitter<SearchState> emit,
+  ) async {
+    final keyword = event.keyword;
+
+    emit(state.copyWith(isEditing: true, keyword: keyword));
+
+    add(SearchEvent.fetched(keyword));
   }
 
   void _onSubmitted(

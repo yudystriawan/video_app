@@ -12,8 +12,6 @@ import '../../../../shared/widgets/icon.dart';
 import '../bloc/video_loader/video_loader_bloc.dart';
 import '../widgets/video_list_widget.dart';
 
-final _globalKey = GlobalKey<ScaffoldState>();
-
 @RoutePage()
 class VideoOverviewPage extends StatelessWidget implements AutoRouteWrapper {
   const VideoOverviewPage({
@@ -26,16 +24,17 @@ class VideoOverviewPage extends StatelessWidget implements AutoRouteWrapper {
   @override
   Widget build(BuildContext context) {
     final hasInitialKeyword = initialKeyword?.isNotEmpty ?? false;
+    final globalKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
-      key: _globalKey,
+      key: globalKey,
       drawerEnableOpenDragGesture: false,
       drawer: VideoHomeDrawer(
         onMenuTapped: (callback) {
           if (callback != null) {
             callback.call();
           }
-          _globalKey.currentState?.closeDrawer();
+          globalKey.currentState?.closeDrawer();
         },
       ),
       body: NestedScrollView(
@@ -79,7 +78,7 @@ class VideoOverviewPage extends StatelessWidget implements AutoRouteWrapper {
                   AppIcon(
                     icon: const Icon(Icons.notifications_none_outlined),
                     onTap: () {},
-                ),
+                  ),
                   SizedBox(
                     width: 12.w,
                   ),
@@ -109,7 +108,7 @@ class VideoOverviewPage extends StatelessWidget implements AutoRouteWrapper {
           if (!hasInitialKeyword)
             SliverToBoxAdapter(
               child: VideoHomeCategoriesWidget(
-                onDrawerTap: () => _globalKey.currentState?.openDrawer(),
+                onDrawerTap: () => globalKey.currentState?.openDrawer(),
               ),
             ),
         ],
