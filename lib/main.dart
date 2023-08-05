@@ -8,7 +8,6 @@ import 'core/utils/bloc_observer.dart';
 import 'features/search/data/datasources/hive/query_model.dart';
 import 'features/video/presentation/bloc/mini_player/mini_player_bloc.dart';
 import 'features/video/presentation/bloc/video_player/video_player_bloc.dart';
-import 'home_page.dart';
 import 'injection.dart';
 import 'routes/router.dart';
 
@@ -76,13 +75,11 @@ class _MyAppState extends State<MyApp> {
               final height = MediaQuery.of(context).size.height;
               context
                   .read<MiniPlayerBloc>()
-                  .add(MiniPlayerEvent.initialized(min: 76.w, max: height));
+                  .add(MiniPlayerEvent.initialized(min: 54.w, max: height));
 
               return OrientationBuilder(
                 builder: (context, orientation) {
-                  return HomePage(
-                    child: child,
-                  );
+                  return child!;
                 },
               );
             },

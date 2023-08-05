@@ -105,12 +105,12 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
       // reset queue
       if (isPlaying) await _resetValue();
 
-      try {
-        emit(state.copyWith(
-          videoQueue: KtList.from([selectedVideo]),
-          currentIndex: 0,
-        ));
+      emit(state.copyWith(
+        videoQueue: KtList.from([selectedVideo]),
+        currentIndex: 0,
+      ));
 
+      try {
         // initialize video
         final videoPlayerController =
             VideoPlayerController.network(selectedVideo.sources.first);
@@ -136,7 +136,6 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
 
         controller!.addListener(setupListener);
       } catch (e, s) {
-        // emit(state.copyWith(currentVideo: null));
         log('_onPlayed', error: e, stackTrace: s);
       }
       return;
@@ -165,10 +164,10 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
   ) async {
     if (controller != null) {
       await _resetValue();
-      emit(state.copyWith(
-        videoQueue: const KtList.empty(),
-      ));
     }
+    emit(state.copyWith(
+      videoQueue: const KtList.empty(),
+    ));
   }
 
   void _onPaused(

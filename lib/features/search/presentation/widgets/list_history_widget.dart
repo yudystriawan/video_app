@@ -52,7 +52,9 @@ class ListHistoryWidget extends StatelessWidget {
                   ),
                   AppIcon(
                     icon: const Icon(Icons.arrow_outward),
-                    onTap: () {},
+                    onTap: () => context
+                        .read<SearchBloc>()
+                        .add(SearchEvent.historySelected(history)),
                   ),
                 ],
               ),

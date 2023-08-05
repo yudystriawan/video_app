@@ -36,6 +36,7 @@ class SearchPage extends StatelessWidget implements AutoRouteWrapper {
               onClear: () => context
                   .read<SearchBloc>()
                   .add(const SearchEvent.keywordChanged('')),
+              autoFocus: true,
             ),
             const Expanded(
               child: ListHistoryWidget(),
@@ -50,7 +51,7 @@ class SearchPage extends StatelessWidget implements AutoRouteWrapper {
   Widget wrappedRoute(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          getIt<SearchBloc>()..add(const SearchEvent.fetched()),
+          getIt<SearchBloc>()..add(SearchEvent.initialized(inititalKeyword)),
       child: this,
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:video_app/shared/widgets/empty_videos.dart';
 
 import '../bloc/video_loader/video_loader_bloc.dart';
 import 'video_item_widget.dart';
@@ -20,7 +21,7 @@ class VideoListWidget extends StatelessWidget {
           loadSuccess: (value) {
             final videos = value.videos;
 
-            if (videos.isEmpty()) return const Text('Kosong');
+            if (videos.isEmpty()) return const EmptyVideos();
 
             return ListView.builder(
               itemCount: videos.size,
