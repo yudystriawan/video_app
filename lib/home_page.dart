@@ -16,11 +16,17 @@ import 'routes/router.dart';
 import 'shared/widgets/bottom_navigation_bar.dart';
 
 @RoutePage()
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({
     Key? key,
   }) : super(key: key);
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final _innerRouterKey = GlobalKey<AutoRouterState>();
   @override
   Widget build(BuildContext context) {
     return BlocListener<VideoPlayerBloc, VideoPlayerState>(
@@ -41,7 +47,10 @@ class HomePage extends StatelessWidget {
         builder: (context, state) {
           final isFullscreen = state.isFullscreen;
 
+          int currentIndex = 0;
+
           return AutoRouter(
+            key: _innerRouterKey,
             builder: (context, content) {
               final currentName = AutoRouter.of(context).current.name;
 
@@ -119,18 +128,42 @@ class HomePage extends StatelessWidget {
                                   child: Opacity(
                                     opacity: opacity,
                                     child: AppBottomNavigationBar(
+                                      currentIndex: currentIndex,
                                       onTap: (index) {
-                                        if (index == 2) {
-                                          showAddVideoBottomSheet(context)
-                                              .then((value) {
-                                            if (value == null) return;
-                                            showToast(
-                                              context,
-                                              title: Text(value),
-                                            );
-                                          });
-
-                                          return;
+                                        final router = _innerRouterKey
+                                            .currentState?.controller;
+                                        switch (index) {
+                                          case 0:
+                                            router
+                                                ?.replace(VideoOverviewRoute());
+                                            currentIndex = index;
+                                            break;
+                                          case 1:
+                                            router?.replace(
+                                                const ShortsOverviewRoute());
+                                            currentIndex = index;
+                                            break;
+                                          case 2:
+                                            showAddVideoBottomSheet(context)
+                                                .then((value) {
+                                              if (value == null) return;
+                                              showToast(
+                                                context,
+                                                title: Text(value),
+                                              );
+                                            });
+                                            break;
+                                          case 3:
+                                            router?.replace(
+                                                const SubscriptionsOverviewRoute());
+                                            currentIndex = index;
+                                            break;
+                                          case 4:
+                                            router
+                                                ?.replace(const LibraryRoute());
+                                            currentIndex = index;
+                                            break;
+                                          default:
                                         }
                                       },
                                       items: [

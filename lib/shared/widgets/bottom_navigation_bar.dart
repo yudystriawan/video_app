@@ -22,7 +22,6 @@ class AppBottomNavigationBar extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final selectedColor = this.selectedColor ?? Theme.of(context).primaryColor;
-    final currentIndex = useState(this.currentIndex);
 
     return Container(
       color: Colors.white,
@@ -32,7 +31,7 @@ class AppBottomNavigationBar extends HookWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: items.map(
           (e) {
-            final selectedItem = items[currentIndex.value];
+            final selectedItem = items[currentIndex];
             final isSelected = selectedItem == e;
             final getItemIndex = items.indexWhere((element) => element == e);
 
@@ -61,8 +60,7 @@ class AppBottomNavigationBar extends HookWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 child: GestureDetector(
                   onTap: () {
-                    currentIndex.value = getItemIndex;
-                    onTap?.call(currentIndex.value);
+                    onTap?.call(getItemIndex);
                   },
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

@@ -79,7 +79,7 @@ class VideoOverviewPage extends StatelessWidget implements AutoRouteWrapper {
                   AppIcon(
                     icon: const Icon(Icons.notifications_none_outlined),
                     onTap: () {},
-                  ),
+                ),
                   SizedBox(
                     width: 12.w,
                   ),
