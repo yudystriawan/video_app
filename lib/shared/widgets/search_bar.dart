@@ -61,9 +61,10 @@ class MySearchBar extends HookWidget {
             constraints: BoxConstraints(
               maxHeight: 28.w,
             ),
-            suffixIcon: Builder(
-              builder: (context) {
-                if (controller.text.isEmpty) return const SizedBox();
+            suffixIcon: ValueListenableBuilder(
+              valueListenable: controller,
+              builder: (context, value, child) {
+                if (value.text.isEmpty) return const SizedBox();
 
                 return AppIcon(
                   icon: const Icon(Icons.close),

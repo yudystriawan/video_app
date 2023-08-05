@@ -51,7 +51,7 @@ class SearchPage extends StatelessWidget implements AutoRouteWrapper {
   Widget wrappedRoute(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          getIt<SearchBloc>()..add(SearchEvent.fetched(inititalKeyword)),
+          getIt<SearchBloc>()..add(SearchEvent.initialized(inititalKeyword)),
       child: this,
     );
   }
