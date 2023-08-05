@@ -18,6 +18,14 @@ class MiniPlayerBloc extends Bloc<MiniPlayerEvent, MiniPlayerState> {
   MiniPlayerBloc() : super(MiniPlayerState.initial()) {
     on<_Initialized>(_onInitialized);
     on<_Expanded>(_onExpanded);
+    on<_Collapsed>(_onCollapsed);
+    on<_Dismissed>(_onDismissed);
+  }
+
+  @override
+  Future<void> close() {
+    miniplayerController.dispose();
+    return super.close();
   }
 
   void _onInitialized(
@@ -30,6 +38,7 @@ class MiniPlayerBloc extends Bloc<MiniPlayerEvent, MiniPlayerState> {
       emit(state.copyWith(
         playerMinHeight: event.min,
         playerMaxHeight: event.max,
+        isDismissed: false,
       ));
     }
   }
@@ -39,5 +48,21 @@ class MiniPlayerBloc extends Bloc<MiniPlayerEvent, MiniPlayerState> {
     Emitter<MiniPlayerState> emit,
   ) async {
     miniplayerController.animateToHeight(state: PanelState.MAX);
+    emit(state.copyWith(isDismissed: false));
+  }
+
+  void _onCollapsed(
+    _Collapsed event,
+    Emitter<MiniPlayerState> emit,
+  ) async {
+    miniplayerController.animateToHeight(state: PanelState.MIN);
+    emit(state.copyWith(isDismissed: false));
+  }
+
+  void _onDismissed(
+    _Dismissed event,
+    Emitter<MiniPlayerState> emit,
+  ) async {
+    emit(state.copyWith(isDismissed: true));
   }
 }

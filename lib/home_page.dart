@@ -27,6 +27,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _innerRouterKey = GlobalKey<AutoRouterState>();
+  int _currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<VideoPlayerBloc, VideoPlayerState>(
@@ -46,8 +48,6 @@ class _HomePageState extends State<HomePage> {
         buildWhen: (p, c) => p.isFullscreen != c.isFullscreen,
         builder: (context, state) {
           final isFullscreen = state.isFullscreen;
-
-          int currentIndex = 0;
 
           return AutoRouter(
             key: _innerRouterKey,
@@ -128,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                                   child: Opacity(
                                     opacity: opacity,
                                     child: AppBottomNavigationBar(
-                                      currentIndex: currentIndex,
+                                      currentIndex: _currentIndex,
                                       onTap: (index) {
                                         final router = _innerRouterKey
                                             .currentState?.controller;
@@ -136,12 +136,12 @@ class _HomePageState extends State<HomePage> {
                                           case 0:
                                             router
                                                 ?.replace(VideoOverviewRoute());
-                                            currentIndex = index;
+                                            _currentIndex = index;
                                             break;
                                           case 1:
                                             router?.replace(
                                                 const ShortsOverviewRoute());
-                                            currentIndex = index;
+                                            _currentIndex = index;
                                             break;
                                           case 2:
                                             showAddVideoBottomSheet(context)
@@ -156,12 +156,12 @@ class _HomePageState extends State<HomePage> {
                                           case 3:
                                             router?.replace(
                                                 const SubscriptionsOverviewRoute());
-                                            currentIndex = index;
+                                            _currentIndex = index;
                                             break;
                                           case 4:
                                             router
                                                 ?.replace(const LibraryRoute());
-                                            currentIndex = index;
+                                            _currentIndex = index;
                                             break;
                                           default:
                                         }
