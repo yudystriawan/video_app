@@ -45,4 +45,4 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: profile-apk
-        path: build/app/outputs/flutter-apk/app-profile.apk
+        path: build/app/outputs/flutter-apk/video_app_profile.apk
