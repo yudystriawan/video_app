@@ -43,4 +43,4 @@ jobs:
     - uses: actions/upload-artifact@v1
       with:
         name: profile-apk
-        path: build/app/outputs/apk/release/app-profile.apk
+        path: build/app/outputs/flutter-apk/app-profile.apk
