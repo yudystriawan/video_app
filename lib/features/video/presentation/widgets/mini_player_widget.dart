@@ -65,7 +65,7 @@ class MiniPlayerWidget extends StatelessWidget {
                     children: [
                       VideoScreen(
                         width: width,
-                        height: height,
+                        height: height - progressIndicatorHeight,
                         showControl: false,
                         controller: controller,
                       ),

@@ -44,6 +44,10 @@ class VideoDetailPage extends StatelessWidget {
                 builder: (context, state) {
                   double maxPlayerHeight = 210.w;
 
+                  if (state.isDismissed) {
+                    return const SizedBox();
+                  }
+
                   return Miniplayer(
                     valueNotifier:
                         context.watch<MiniPlayerBloc>().playerExpandProgress,

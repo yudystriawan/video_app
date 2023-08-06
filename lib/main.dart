@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:video_app/routes/route_observer.dart';
 
 import 'core/utils/bloc_observer.dart';
 import 'features/search/data/datasources/hive/query_model.dart';
@@ -66,7 +67,11 @@ class _MyAppState extends State<MyApp> {
         minTextAdapt: true,
         builder: (context, child) {
           return MaterialApp.router(
-            routerConfig: appRouter.config(),
+            routerConfig: appRouter.config(
+              navigatorObservers: () => [
+                MyRouteObserver(),
+              ],
+            ),
             title: 'Video App Demo',
             theme: ThemeData(
               primarySwatch: Colors.blue,
