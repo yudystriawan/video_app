@@ -211,7 +211,10 @@ class _HomePageState extends State<HomePage> {
                           );
                         },
                       )
-                    : null,
+                    : Container(
+                        height: MediaQuery.of(context).padding.bottom,
+                        color: Colors.white,
+                      ),
               );
             },
           );
